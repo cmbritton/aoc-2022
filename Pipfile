@@ -1,0 +1,33 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+bitarray = "*"
+cycler = "*"
+fonttools = "*"
+jupyter = "*"
+kiwisolver = "*"
+matplotlib = "*"
+numpy = "*"
+packaging = "*"
+psutil = "*"
+pyparsing = "*"
+python-dateutil = "*"
+scipy = "*"
+six = "*"
+tqdm = "*"
+
+[dev-packages]
+flake8 = "*"
+sphinx = "*"
+sphinx-autodoc-typehints = "*"
+
+[scripts]
+clean = "rm -rf build"
+docs = "bash -c 'mkdir -p build; pipenv run python -m pydoc -w ./; mv *.html build; mv build/src.main.python.html build/index.html'"
+lint = "flake8 --max-line-length=80 --max-complexity=6 src"
+
+[requires]
+python_version = "3.9"

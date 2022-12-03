@@ -81,9 +81,6 @@ class Solver:
         print_info(part='Part 1', init_timer=init_timer,
                    solver_timer=solver_timer, answer=answer)
 
-        if answer != 8176:
-            print('ERROR!')
-
     @staticmethod
     def get_groups(data: list[Rucksack]):
         return [Group(data[i:i + 3]) for i in range(0, len(data), 3)]
@@ -103,9 +100,6 @@ class Solver:
 
         print_info(part='Part 2', init_timer=init_timer,
                    solver_timer=solver_timer, answer=answer)
-
-        if answer != 2689:
-            print('ERROR!')
 
     def run(self) -> None:
         self.part_1()

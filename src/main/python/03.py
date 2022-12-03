@@ -5,44 +5,46 @@ Day 3: Rucksack Reorganization
 https://adventofcode.com/2022/day/3
 """
 from dataclasses import dataclass
+from functools import reduce
 
 from src.main.python.util import Timer
+
+LOWERCASE_OFFSET = ord('`')
+UPPERCASE_OFFSET = ord('&')
 
 
 @dataclass
 class Rucksack:
     value: str
 
-    def compartment_1_item_types(self):
-        return self.value[:int(len(self.value) / 2)]
-
-    def compartment_2_item_types(self):
-        return self.value[int(len(self.value) / 2):]
-
     def shared_items(self):
-        return set(self.compartment_1_item_types()) & set(
-            self.compartment_2_item_types())
+        return set(self.value[:int(len(self.value) / 2)]) & set(
+                self.value[int(len(self.value) / 2):])
 
-    def item_priority(self, item):
-        if item.islower():
-            return ord(item[0]) - 96
-        else:
-            return ord(item[0]) - 38
+    @staticmethod
+    def priority(item):
+        offset = LOWERCASE_OFFSET if item.islower() else UPPERCASE_OFFSET
+        return ord(item[0]) - offset
 
     def total_priorities(self):
-        total = 0
-        l = len(self.value)
-        for item in self.shared_items():
-            c1 = self.compartment_1_item_types()
-            l1 = len(c1)
-            c2 = self.compartment_2_item_types()
-            l2 = len(c2)
-            s = self.shared_items()
-            total += self.item_priority(item)
-        return total
+        return sum([self.priority(i) for i in self.shared_items()])
 
 
-# 7619 is wrong
+@dataclass
+class Group:
+    value: list[Rucksack]
+
+    def badge_type(self):
+        return str(list(
+                set(self.value[0].value) & set(self.value[1].value) & set(
+                        self.value[2].value))[0])
+
+    def badge_priority(self):
+        badge_type = self.badge_type()
+        offset = LOWERCASE_OFFSET if badge_type.islower() else UPPERCASE_OFFSET
+        return ord(badge_type) - offset
+
+
 @dataclass
 class Solver:
     """
@@ -92,16 +94,35 @@ class Solver:
         init_timer.stop()
 
         solver_timer = Timer()
-        answer = 0
-        for rucksack in data:
-            answer += rucksack.total_priorities()
+        answer = reduce(lambda x, y: x + y,
+                        [r.total_priorities() for r in data])
         solver_timer.stop()
 
         self.print_info(part='Part 1', init_timer=init_timer,
                         solver_timer=solver_timer, answer=answer)
 
+        if answer != 8176:
+            print('ERROR!')
+
+    @staticmethod
+    def get_groups(data):
+        return [Group(data[i:i + 3]) for i in range(0, len(data), 3)]
+
     def part_2(self) -> None:
-        pass
+        init_timer = Timer()
+        groups = self.get_groups(self.init_data())
+        init_timer.stop()
+
+        solver_timer = Timer()
+        answer = reduce(lambda x, y: x + y,
+                        [g.badge_priority() for g in groups])
+        solver_timer.stop()
+
+        self.print_info(part='Part 2', init_timer=init_timer,
+                        solver_timer=solver_timer, answer=answer)
+
+        if answer != 2689:
+            print('ERROR!')
 
     def run(self) -> None:
         """

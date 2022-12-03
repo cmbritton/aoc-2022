@@ -44,3 +44,21 @@ class Timer:
             unit = 'nanoseconds'
 
         return f'{t:.2f} {unit}'
+
+
+def print_info(part: str, init_timer: Timer,
+               solver_timer: Timer, answer: int) -> None:
+    """
+    Print the answer and elapsed time information for this puzzle.
+
+    Parameters:
+        part: Description of puzzle. 'Part 1' or 'Part 2'.
+        init_timer: Elapsed time for initialization.
+        solver_timer: Elapsed time to solve the puzzle.
+        answer: The puzzle answer.
+    """
+    print(f'{part}\n'
+          f'\tElapsed Time\n'
+          f'\t\t  Init: {init_timer.elapsed_time()}\n'
+          f'\t\t   Run: {solver_timer.elapsed_time()}\n'
+          f'\t\tAnswer: {answer}')

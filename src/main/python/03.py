@@ -7,7 +7,7 @@ https://adventofcode.com/2022/day/3
 from dataclasses import dataclass
 from functools import reduce
 
-from src.main.python.util import Timer
+from src.main.python.util import Timer, print_info
 
 LOWERCASE_OFFSET = ord('`')
 UPPERCASE_OFFSET = ord('&')
@@ -70,24 +70,6 @@ class Solver:
 
         return rucksacks
 
-    @staticmethod
-    def print_info(part: str, init_timer: Timer,
-                   solver_timer: Timer, answer: int) -> None:
-        """
-        Print the answer and elapsed time information for this puzzle.
-
-        Parameters:
-            part: Description of puzzle. 'Part 1' or 'Part 2'.
-            init_timer: Elapsed time for initialization.
-            solver_timer: Elapsed time to solve the puzzle.
-            answer: The puzzle answer.
-        """
-        print(f'{part}\n'
-              f'\tElapsed Time\n'
-              f'\t\t  Init: {init_timer.elapsed_time()}\n'
-              f'\t\t   Run: {solver_timer.elapsed_time()}\n'
-              f'\t\tAnswer: {answer}')
-
     def part_1(self) -> None:
         init_timer = Timer()
         data = self.init_data()
@@ -98,8 +80,8 @@ class Solver:
                         [r.total_priorities() for r in data])
         solver_timer.stop()
 
-        self.print_info(part='Part 1', init_timer=init_timer,
-                        solver_timer=solver_timer, answer=answer)
+        print_info(part='Part 1', init_timer=init_timer,
+                   solver_timer=solver_timer, answer=answer)
 
         if answer != 8176:
             print('ERROR!')
@@ -118,8 +100,8 @@ class Solver:
                         [g.badge_priority() for g in groups])
         solver_timer.stop()
 
-        self.print_info(part='Part 2', init_timer=init_timer,
-                        solver_timer=solver_timer, answer=answer)
+        print_info(part='Part 2', init_timer=init_timer,
+                   solver_timer=solver_timer, answer=answer)
 
         if answer != 2689:
             print('ERROR!')

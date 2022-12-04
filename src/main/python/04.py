@@ -50,11 +50,9 @@ class Solver(AbstractSolver):
         day = os.path.basename(__file__)[:-3]
         for line in self.get_data(day):
             m = re.search(pattern, line)
-            min_1 = int(m.group(1))
-            max_1 = int(m.group(2))
-            min_2 = int(m.group(3))
-            max_2 = int(m.group(4))
-            data.append(Pair(Sections(min_1, max_1), Sections(min_2, max_2)))
+            a, b, c, d = m.group(1, 2, 3, 4)
+            data.append(Pair(Sections(int(a), int(b)),
+                             Sections(int(c), int(d))))
 
         return data
 

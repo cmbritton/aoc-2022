@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Day X: Something
+Day 5: Something
 
-https://adventofcode.com/2022/day/X
+https://adventofcode.com/2022/day/5
 """
 import os.path
 import re

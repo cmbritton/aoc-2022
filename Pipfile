@@ -26,6 +26,7 @@ sphinx-autodoc-typehints = "*"
 
 [scripts]
 clean = "rm -rf build"
+day = "bash -c 'export PYTHONPATH=$(pwd); cd src/main/python; python $1.py'"
 docs = "bash -c 'mkdir -p build; pipenv run python -m pydoc -w ./; mv *.html build; mv build/src.main.python.html build/index.html'"
 lint = "flake8 --max-line-length=80 --max-complexity=6 src"
 

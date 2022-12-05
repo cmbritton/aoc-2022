@@ -34,6 +34,17 @@ class Cargo:
         for i in range(qty):
             self.move_crate(src_stack, dst_stack)
 
+    def bulk_move_crates(self, qty, src_stack, dst_stack):
+        qty2 = qty
+        # if qty2 > len(self.stacks[dst_stack]):
+        #     qty2 = len(self.stacks[dst_stack]) - 1
+        # if qty2 < 0:
+        #     return
+        self.stacks[dst_stack].extend(self.stacks[src_stack][-qty2:])
+        del self.stacks[src_stack][-qty2:]
+        pass
+
+
     def get_top_crates(self):
         top_creates = []
         for i in range(len(self.stacks)):
@@ -69,7 +80,6 @@ class Solver(AbstractSolver):
 
         move_data = data[idx + 1:]
 
-        stack_count = len(stack_names)
         # stack_header_pattern = r'^.(.)...(.)...(.).$'
         stack_header_pattern = r'^.(.)...(.)...(.)...(.)...(.)...(.)...(' \
                                r'.)...(.)...(.).$'
@@ -101,9 +111,9 @@ class Solver(AbstractSolver):
 
     def solve_part_2(self, data: list[Any]) -> Any:
         answer = 0
-        # for d in data:
-        #     answer += 1 if len(d) > 5 else 0
-        return answer
+        for move in data:
+            self.cargo.bulk_move_crates(move.qty, move.src_stack, move.dst_stack)
+        return self.cargo.get_top_crates()
 
 
 def main() -> None:

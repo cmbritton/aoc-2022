@@ -105,15 +105,16 @@ class Solver(AbstractSolver):
     def __init__(self) -> None:
         super().__init__()
 
-    def init_data(self) -> list[Any]:
-        data = []
+    def init_data(self, data_file_path: str = None) -> Any:
+        data = self.get_data(self.get_day(), data_file_path)
+        turns = []
         day = os.path.basename(__file__)[3:5]
-        for line in self.get_data(day):
+        for line in data:
             (your_choice, my_choice) = tuple(line.split())
-            data.append(Turn(your_shape=Shape(your_choice),
-                             my_shape=Shape(my_choice)))
+            turns.append(Turn(your_shape=Shape(your_choice),
+                              my_shape=Shape(my_choice)))
 
-        return data
+        return turns
 
     @staticmethod
     def decode_shapes(data: list[Turn]) -> list[Turn]:
@@ -148,11 +149,14 @@ class Solver(AbstractSolver):
             my_total += score[1]
         return my_total
 
-    def solve_part_1(self, data: list[Any]) -> int:
+    def solve_part_1(self, data: list[Any]) -> Any:
         return self.play(self.decode_shapes(data))
 
-    def solve_part_2(self, data: list[Any]) -> int:
+    def solve_part_2(self, data: list[Any]) -> Any:
         return self.play(self.decode_outcomes(data))
+
+    def get_day(self) -> str:
+        return os.path.basename(__file__)[3:5]
 
 
 def main() -> None:

@@ -5,7 +5,6 @@ Day 6: Something
 https://adventofcode.com/2022/day/6
 """
 import os.path
-import re
 from dataclasses import dataclass
 from typing import Any
 
@@ -13,8 +12,16 @@ from src.main.python.util import AbstractSolver
 
 
 @dataclass
-class MyData:
+class SignalData:
     value: str
+
+    def start_of_packet_index(self) -> int:
+        for i in range(len(self.value) - 4):
+            window = self.value[i:i + 4]
+            char_count = set(window)
+            if len(window) == len(char_count):
+                return i + 1
+        return -1
 
 
 class Solver(AbstractSolver):
@@ -22,25 +29,15 @@ class Solver(AbstractSolver):
         super().__init__()
 
     def init_data(self) -> list[Any]:
-        pattern = r'(.*)'
-        data = []
         day = os.path.basename(__file__)[:-3]
-        for line in self.get_data(day):
-            m = re.search(pattern, line)
-            data.append(MyData(m.group(1)))
-
-        return data
+        return list(self.get_data(day))
 
     def solve_part_1(self, data: list[Any]) -> int:
-        answer = 0
-        for d in data:
-            answer += 1 if len(d) > 0 else 0
-        return answer
+        signalData = SignalData(data[0])
+        return signalData.start_of_packet_index() + 3
 
     def solve_part_2(self, data: list[Any]) -> int:
         answer = 0
-        for d in data:
-            answer += 1 if len(d) > 5 else 0
         return answer
 
 

@@ -47,7 +47,7 @@ class Solver(AbstractSolver):
     def init_data(self) -> list[Any]:
         pattern = r'([0-9]+)-([0-9]+),([0-9]+)-([0-9]+)'
         data = []
-        day = os.path.basename(__file__)[:-3]
+        day = os.path.basename(__file__)[3:5]
         for line in self.get_data(day):
             m = re.search(pattern, line)
             a, b, c, d = m.group(1, 2, 3, 4)

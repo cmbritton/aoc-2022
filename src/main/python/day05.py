@@ -62,7 +62,7 @@ class Solver(AbstractSolver):
         super().__init__()
 
     def init_data(self) -> list[Any]:
-        day = os.path.basename(__file__)[:-3]
+        day = os.path.basename(__file__)[3:5]
         data = self.get_data(day)
 
         idx = data.index('')

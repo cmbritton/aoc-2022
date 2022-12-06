@@ -31,7 +31,7 @@ class Solver(AbstractSolver):
     def init_data(self) -> list[Any]:
         data = []
         items = []
-        day = os.path.basename(__file__)[:-3]
+        day = os.path.basename(__file__)[3:5]
         for line in self.get_data(day):
             if not line:
                 data.append(Elf(items))

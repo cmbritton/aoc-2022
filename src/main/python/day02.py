@@ -107,7 +107,7 @@ class Solver(AbstractSolver):
 
     def init_data(self) -> list[Any]:
         data = []
-        day = os.path.basename(__file__)[:-3]
+        day = os.path.basename(__file__)[3:5]
         for line in self.get_data(day):
             (your_choice, my_choice) = tuple(line.split())
             data.append(Turn(your_shape=Shape(your_choice),

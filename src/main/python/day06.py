@@ -37,7 +37,7 @@ class Solver(AbstractSolver):
         super().__init__()
 
     def init_data(self) -> list[Any]:
-        day = os.path.basename(__file__)[:-3]
+        day = os.path.basename(__file__)[3:5]
         return list(self.get_data(day))
 
     def solve_part_1(self, data: list[Any]) -> int:

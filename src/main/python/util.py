@@ -1,3 +1,4 @@
+import os
 import time
 from abc import abstractmethod, ABC
 from typing import Any
@@ -53,7 +54,7 @@ class AbstractSolver(ABC):
         self.data = None
 
     @abstractmethod
-    def init_data(self) -> Any:
+    def init_data(self, data_file_path: str = None) -> Any:
         pass
 
     @abstractmethod
@@ -64,9 +65,13 @@ class AbstractSolver(ABC):
     def solve_part_2(self, data: Any) -> Any:
         pass
 
-    def part_1(self) -> Any:
+    @abstractmethod
+    def get_day(self):
+        pass
+
+    def part_1(self, data_file_path: str = None) -> Any:
         init_timer = Timer()
-        data = self.init_data()
+        data = self.init_data(data_file_path)
         init_timer.stop()
 
         solver_timer = Timer()
@@ -78,9 +83,9 @@ class AbstractSolver(ABC):
 
         return answer
 
-    def part_2(self) -> Any:
+    def part_2(self, data_file_path: str = None) -> Any:
         init_timer = Timer()
-        data = self.init_data()
+        data = self.init_data(data_file_path)
         init_timer.stop()
 
         solver_timer = Timer()
@@ -93,8 +98,11 @@ class AbstractSolver(ABC):
         return answer
 
     def run(self) -> None:
-        self.part_1()
-        self.part_2()
+        day = self.get_day()
+        data_file_path = os.path.join(os.environ.get('RESOURCES_DIR_PATH'),
+                                      f'day{day}.data')
+        self.part_1(data_file_path)
+        self.part_2(data_file_path)
 
     @staticmethod
     def print_info(part: str, init_timer: Timer,
@@ -106,6 +114,11 @@ class AbstractSolver(ABC):
               f'\t\tAnswer: {answer}')
 
     @staticmethod
-    def get_data(day: str) -> list[str]:
-        with open(f'../resources/day{day}.data', 'r') as data_file:
+    def get_data(day: str, data_file_path: str = None) -> list[str]:
+        if data_file_path:
+            path = data_file_path
+        else:
+            path = os.path.join(os.environ.get('RESOURCES_DIR_PATH'),
+                                f'day{day}.data')
+        with open(path, 'r') as data_file:
             return data_file.read().splitlines()

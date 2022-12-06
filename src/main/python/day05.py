@@ -61,9 +61,8 @@ class Solver(AbstractSolver):
     def __init__(self) -> None:
         super().__init__()
 
-    def init_data(self) -> list[Any]:
-        day = os.path.basename(__file__)[3:5]
-        data = self.get_data(day)
+    def init_data(self, data_file_path: str = None) -> Any:
+        data = self.get_data(self.get_day(), data_file_path)
 
         idx = data.index('')
         stack_data = data[0:idx]
@@ -72,16 +71,14 @@ class Solver(AbstractSolver):
 
         move_data = data[idx + 1:]
 
-        stack_header_pattern = r'^.(.)...(.)...(.)...(.)...(.)...(.)...(' \
-                               r'.)...(.)...(.).$'
+        stack_header_pattern = r'\s?(\[\S+\]|\s\s\s)\s?'
 
         self.cargo = Cargo()
         for line in stack_data:
-            m = re.search(stack_header_pattern, line)
-            crates = m.group(1, 2, 3, 4, 5, 6, 7, 8, 9)
+            crates = re.findall(stack_header_pattern, line)
             for i, crate in enumerate(crates):
                 if crate.strip():
-                    self.cargo.add_crate(i, crate)
+                    self.cargo.add_crate(i, crate[1])
 
         moves = []
         move_pattern = r'^move (\d*) from (\d*) to (\d*)$'
@@ -92,6 +89,9 @@ class Solver(AbstractSolver):
                               int(src_stack) - 1, int(dst_stack) - 1))
 
         return moves
+
+    def get_day(self) -> str:
+        return os.path.basename(__file__)[3:5]
 
     def solve_part_1(self, data: list[Any]) -> Any:
         for move in data:

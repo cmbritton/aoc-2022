@@ -30,10 +30,11 @@ sphinx-autodoc-typehints = "*"
 
 [scripts]
 clean = "rm -rf build"
-day = "bash -c 'export PYTHONPATH=$(pwd); cd src/main/python; python $1.py'"
-docs = "bash -c 'mkdir -p build; pipenv run python -m pydoc -w ./; mv *.html build; mv build/src.main.python.html build/index.html'"
+day = "python"
+docs = "python -m pydoc -w ./"
+docs2 = "python -c \"import shutil; import os;\nos.mkdir('build')\nfor f in os.listdir('.'):\n    if f.endswith('.html'):\n        shutil.move(f, 'build')\""
 lint = "flake8 --max-line-length=80 --max-complexity=6 src"
-test = "pipenv run python -m pytest --durations=5 --html=build/tests/unit-test-report.html --self-contained-html --cov=src --cov-report=term-missing --cov-report=html:build/coverage -v --junit-xml build/tests/pytest_results.xml src/test"
+test = "python -m pytest --durations=5 --html=build/tests/unit-test-report.html --self-contained-html --cov=src --cov-report=term-missing --cov-report=html:build/coverage -v --junit-xml build/tests/pytest_results.xml src/test/python"
 
 [requires]
 python_version = "3.9"

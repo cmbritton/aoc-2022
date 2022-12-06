@@ -51,13 +51,14 @@ class Solver(AbstractSolver):
     def __init__(self) -> None:
         super().__init__()
 
-    def init_data(self) -> list[Any]:
-        data = []
+    def init_data(self, data_file_path: str = None) -> Any:
+        data = self.get_data(self.get_day(), data_file_path)
+        rucksacks = []
         day = os.path.basename(__file__)[3:5]
-        for line in self.get_data(day):
-            data.append(Rucksack(line.strip()))
+        for line in data:
+            rucksacks.append(Rucksack(line.strip()))
 
-        return data
+        return rucksacks
 
     @staticmethod
     def get_groups(data: list[Rucksack]):
@@ -69,6 +70,9 @@ class Solver(AbstractSolver):
     def solve_part_2(self, data: list[Any]) -> int:
         groups = self.get_groups(data)
         return reduce(lambda x, y: x + y, [g.badge_priority() for g in groups])
+
+    def get_day(self) -> str:
+        return os.path.basename(__file__)[3:5]
 
 
 def main() -> None:

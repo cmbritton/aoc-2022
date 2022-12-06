@@ -36,9 +36,8 @@ class Solver(AbstractSolver):
     def __init__(self) -> None:
         super().__init__()
 
-    def init_data(self) -> list[Any]:
-        day = os.path.basename(__file__)[3:5]
-        return list(self.get_data(day))
+    def init_data(self, data_file_path: str = None) -> Any:
+        return list(self.get_data(self.get_day(), data_file_path))
 
     def solve_part_1(self, data: list[Any]) -> int:
         signalData = SignalData(data[0])
@@ -48,6 +47,9 @@ class Solver(AbstractSolver):
         signalData = SignalData(data[0])
         start_idx = signalData.start_of_packet_index()
         return signalData.start_of_message_index(start_idx) + 13
+
+    def get_day(self) -> str:
+        return os.path.basename(__file__)[3:5]
 
 
 def main() -> None:

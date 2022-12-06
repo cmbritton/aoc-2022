@@ -90,9 +90,6 @@ class Solver(AbstractSolver):
 
         return moves
 
-    def get_day(self) -> str:
-        return os.path.basename(__file__)[3:5]
-
     def solve_part_1(self, data: list[Any]) -> Any:
         for move in data:
             self.cargo.move_crates(move.qty, move.src_stack, move.dst_stack)
@@ -103,6 +100,9 @@ class Solver(AbstractSolver):
             self.cargo.bulk_move_crates(move.qty, move.src_stack,
                                         move.dst_stack)
         return self.cargo.get_top_crates()
+
+    def get_day(self) -> str:
+        return os.path.basename(__file__)[3:5]
 
 
 def main() -> None:

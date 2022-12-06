@@ -2,7 +2,7 @@
 """
 Day X: Something
 
-https://adventofcode.com/2022/day/X
+https://adventofcode.com/2022/day/7
 """
 import os.path
 import re

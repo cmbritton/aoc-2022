@@ -108,7 +108,6 @@ class Solver(AbstractSolver):
     def init_data(self, data_file_path: str = None) -> Any:
         data = self.get_data(self.get_day(), data_file_path)
         turns = []
-        day = os.path.basename(__file__)[3:5]
         for line in data:
             (your_choice, my_choice) = tuple(line.split())
             turns.append(Turn(your_shape=Shape(your_choice),

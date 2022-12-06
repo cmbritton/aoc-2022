@@ -32,16 +32,10 @@ class Solver(AbstractSolver):
         return data
 
     def solve_part_1(self, data: list[Any]) -> int:
-        answer = 0
-        for d in data:
-            answer += 1 if len(d) > 0 else 0
-        return answer
+        return 0
 
     def solve_part_2(self, data: list[Any]) -> int:
-        answer = 0
-        for d in data:
-            answer += 1 if len(d) > 5 else 0
-        return answer
+        return 0
 
 
 def main() -> None:

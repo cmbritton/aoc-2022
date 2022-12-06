@@ -53,18 +53,18 @@ class AbstractSolver(ABC):
         self.data = None
 
     @abstractmethod
-    def init_data(self) -> list[Any]:
+    def init_data(self) -> Any:
         pass
 
     @abstractmethod
-    def solve_part_1(self, data: list[Any]) -> int:
+    def solve_part_1(self, data: Any) -> Any:
         pass
 
     @abstractmethod
-    def solve_part_2(self, data: list[Any]) -> int:
+    def solve_part_2(self, data: Any) -> Any:
         pass
 
-    def part_1(self) -> None:
+    def part_1(self) -> Any:
         init_timer = Timer()
         data = self.init_data()
         init_timer.stop()
@@ -76,7 +76,9 @@ class AbstractSolver(ABC):
         self.print_info(part='Part 1', init_timer=init_timer,
                         solver_timer=solver_timer, answer=answer)
 
-    def part_2(self) -> None:
+        return answer
+
+    def part_2(self) -> Any:
         init_timer = Timer()
         data = self.init_data()
         init_timer.stop()
@@ -87,6 +89,8 @@ class AbstractSolver(ABC):
 
         self.print_info(part='Part 2', init_timer=init_timer,
                         solver_timer=solver_timer, answer=answer)
+
+        return answer
 
     def run(self) -> None:
         self.part_1()

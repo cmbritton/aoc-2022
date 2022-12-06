@@ -35,15 +35,9 @@ class Cargo:
             self.move_crate(src_stack, dst_stack)
 
     def bulk_move_crates(self, qty, src_stack, dst_stack):
-        qty2 = qty
-        # if qty2 > len(self.stacks[dst_stack]):
-        #     qty2 = len(self.stacks[dst_stack]) - 1
-        # if qty2 < 0:
-        #     return
-        self.stacks[dst_stack].extend(self.stacks[src_stack][-qty2:])
-        del self.stacks[src_stack][-qty2:]
+        self.stacks[dst_stack].extend(self.stacks[src_stack][-qty:])
+        del self.stacks[src_stack][-qty:]
         pass
-
 
     def get_top_crates(self):
         top_creates = []
@@ -74,20 +68,16 @@ class Solver(AbstractSolver):
         idx = data.index('')
         stack_data = data[0:idx]
         stack_data.reverse()
-        stack_header_data = stack_data[0]
         stack_data = stack_data[1:]
-        stack_names = stack_header_data.split()
 
         move_data = data[idx + 1:]
 
-        # stack_header_pattern = r'^.(.)...(.)...(.).$'
         stack_header_pattern = r'^.(.)...(.)...(.)...(.)...(.)...(.)...(' \
                                r'.)...(.)...(.).$'
 
         self.cargo = Cargo()
         for line in stack_data:
             m = re.search(stack_header_pattern, line)
-            # crates = m.group(1, 2, 3)
             crates = m.group(1, 2, 3, 4, 5, 6, 7, 8, 9)
             for i, crate in enumerate(crates):
                 if crate.strip():
@@ -98,21 +88,20 @@ class Solver(AbstractSolver):
         for line in move_data:
             m = re.search(move_pattern, line)
             quantity, src_stack, dst_stack = m.group(1, 2, 3)
-            moves.append(Move(int(quantity), 
+            moves.append(Move(int(quantity),
                               int(src_stack) - 1, int(dst_stack) - 1))
 
         return moves
 
     def solve_part_1(self, data: list[Any]) -> Any:
-        answer = 0
         for move in data:
             self.cargo.move_crates(move.qty, move.src_stack, move.dst_stack)
         return self.cargo.get_top_crates()
 
     def solve_part_2(self, data: list[Any]) -> Any:
-        answer = 0
         for move in data:
-            self.cargo.bulk_move_crates(move.qty, move.src_stack, move.dst_stack)
+            self.cargo.bulk_move_crates(move.qty, move.src_stack,
+                                        move.dst_stack)
         return self.cargo.get_top_crates()
 
 

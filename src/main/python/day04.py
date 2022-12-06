@@ -44,17 +44,17 @@ class Solver(AbstractSolver):
     def __init__(self) -> None:
         super().__init__()
 
-    def init_data(self) -> list[Any]:
+    def init_data(self, data_file_path: str = None) -> Any:
+        data = self.get_data(self.get_day(), data_file_path)
         pattern = r'([0-9]+)-([0-9]+),([0-9]+)-([0-9]+)'
-        data = []
-        day = os.path.basename(__file__)[3:5]
-        for line in self.get_data(day):
+        pairs = []
+        for line in data:
             m = re.search(pattern, line)
             a, b, c, d = m.group(1, 2, 3, 4)
-            data.append(Pair(Sections(int(a), int(b)),
-                             Sections(int(c), int(d))))
+            pairs.append(Pair(Sections(int(a), int(b)),
+                              Sections(int(c), int(d))))
 
-        return data
+        return pairs
 
     def solve_part_1(self, data: list[Pair]) -> int:
         answer = 0
@@ -67,6 +67,9 @@ class Solver(AbstractSolver):
         for pair in data:
             answer += 1 if pair.has_overlap() else 0
         return answer
+
+    def get_day(self) -> str:
+        return os.path.basename(__file__)[3:5]
 
 
 def main() -> None:

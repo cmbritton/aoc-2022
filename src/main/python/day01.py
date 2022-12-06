@@ -28,28 +28,31 @@ class Solver(AbstractSolver):
     def __init__(self) -> None:
         super().__init__()
 
-    def init_data(self) -> list[Any]:
-        data = []
+    def init_data(self, data_file_path: str = None) -> Any:
+        data = self.get_data(self.get_day(), data_file_path)
+        elves = []
         items = []
-        day = os.path.basename(__file__)[3:5]
-        for line in self.get_data(day):
+        for line in data:
             if not line:
-                data.append(Elf(items))
+                elves.append(Elf(items))
                 items = []
                 continue
             items.append(Item(int(line)))
 
-        data.append(Elf(items))
+        elves.append(Elf(items))
 
-        return data
+        return elves
 
-    def solve_part_1(self, data: list[Any]) -> int:
+    def solve_part_1(self, data: list[Any]) -> Any:
         data.sort(reverse=True, key=lambda x: x.total_calories())
         return data[0].total_calories()
 
-    def solve_part_2(self, data: list[Any]) -> int:
+    def solve_part_2(self, data: list[Any]) -> Any:
         data.sort(reverse=True, key=lambda x: x.total_calories())
         return sum(x.total_calories() for x in data[:3])
+
+    def get_day(self) -> str:
+        return os.path.basename(__file__)[3:5]
 
 
 def main() -> None:

@@ -23,6 +23,14 @@ class SignalData:
                 return i + 1
         return -1
 
+    def start_of_message_index(self, start_idx: int) -> int:
+        for i in range(start_idx, len(self.value) - 14):
+            window = self.value[i:i + 14]
+            char_count = set(window)
+            if len(window) == len(char_count):
+                return i + 1
+        return -1
+
 
 class Solver(AbstractSolver):
     def __init__(self) -> None:
@@ -37,8 +45,9 @@ class Solver(AbstractSolver):
         return signalData.start_of_packet_index() + 3
 
     def solve_part_2(self, data: list[Any]) -> int:
-        answer = 0
-        return answer
+        signalData = SignalData(data[0])
+        start_idx = signalData.start_of_packet_index()
+        return signalData.start_of_message_index(start_idx) + 13
 
 
 def main() -> None:

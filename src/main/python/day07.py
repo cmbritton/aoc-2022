@@ -144,7 +144,19 @@ class Solver(AbstractSolver):
         return answer
 
     def solve_part_2(self, data: Any) -> int:
-        return 0
+        self.build_tree(data)
+        answer = 0
+        total_bytes = 70000000
+        bytes_free = total_bytes - self.root.size_bytes_recursive()
+        needed_bytes = 30000000
+        min_bytes_to_free = needed_bytes - bytes_free
+
+        target_dir = self.root
+        possible_dirs = filter(
+            lambda x: x.size_bytes_recursive() >= min_bytes_to_free,
+            self.root.get_directories_recursive())
+
+        return min([x.size_bytes_recursive() for x in possible_dirs])
 
     def get_day(self) -> str:
         return os.path.basename(__file__)[3:5]

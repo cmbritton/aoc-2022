@@ -101,30 +101,34 @@ class Solver(AbstractSolver):
     def build_tree(self, commands):
         for command in commands:
             if command.is_cd():
-                if command.arg == '/':
-                    self.cwd = self.root
-                    continue
-                elif command.arg == '..':
-                    if not self.cwd.is_root():
-                        self.cwd = self.cwd.parent
-                    continue
-                else:
-                    node = self.cwd.get_child(command.arg)
-                    if not node:
-                        node = Node(True, 0, command.arg, self.cwd, [])
-                        self.cwd.children.append(node)
-                    self.cwd = node
+                self.handle_cd(command)
             elif command.is_ls():
-                for line in command.output:
-                    fields = line.split()
-                    is_dir = fields[0] == 'dir'
-                    size_bytes = int(fields[0]) if fields[0] != 'dir' else 0
-                    if not self.cwd.has_child(fields[1]):
-                        node = Node(is_dir, size_bytes, fields[1], self.cwd,
-                                    [])
-                        self.cwd.children.append(node)
+                self.handle_ls(command)
             else:
                 raise RuntimeError(f'Unknown command: {command.cmd}')
+
+    def handle_ls(self, command):
+        for line in command.output:
+            fields = line.split()
+            is_dir = fields[0] == 'dir'
+            size_bytes = int(fields[0]) if fields[0] != 'dir' else 0
+            if not self.cwd.has_child(fields[1]):
+                node = Node(is_dir, size_bytes, fields[1], self.cwd,
+                            [])
+                self.cwd.children.append(node)
+
+    def handle_cd(self, command):
+        if command.arg == '/':
+            self.cwd = self.root
+        elif command.arg == '..':
+            if not self.cwd.is_root():
+                self.cwd = self.cwd.parent
+        else:
+            node = self.cwd.get_child(command.arg)
+            if not node:
+                node = Node(True, 0, command.arg, self.cwd, [])
+                self.cwd.children.append(node)
+            self.cwd = node
 
     def solve_part_1(self, data: Any) -> int:
         self.build_tree(data)

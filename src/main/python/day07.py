@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Day X: Something
+Day 7: No Space Left On Device
 
 https://adventofcode.com/2022/day/7
 """
@@ -19,13 +19,6 @@ class Node:
     parent: 'Node'
     children: list['Node']
 
-    # def __init__(self) -> None:
-    #     self.is_dir = False
-    #     self.size_bytes = 0
-    #     self.name = ''
-    #     self.parent = None
-    #     self.children = []
-
     def is_root(self):
         return self.name == '/'
 
@@ -41,8 +34,6 @@ class Node:
     def size_bytes_recursive(self):
         if self.is_dir:
             total = sum([n.size_bytes for n in self.children if not n.is_dir])
-            d = [n.size_bytes_recursive() for n in self.children if
-                 n.is_dir]
             return sum([n.size_bytes_recursive() for n in self.children if
                         n.is_dir]) + total
         else:
@@ -145,16 +136,14 @@ class Solver(AbstractSolver):
 
     def solve_part_2(self, data: Any) -> int:
         self.build_tree(data)
-        answer = 0
         total_bytes = 70000000
         bytes_free = total_bytes - self.root.size_bytes_recursive()
         needed_bytes = 30000000
         min_bytes_to_free = needed_bytes - bytes_free
 
-        target_dir = self.root
         possible_dirs = filter(
-            lambda x: x.size_bytes_recursive() >= min_bytes_to_free,
-            self.root.get_directories_recursive())
+                lambda x: x.size_bytes_recursive() >= min_bytes_to_free,
+                self.root.get_directories_recursive())
 
         return min([x.size_bytes_recursive() for x in possible_dirs])
 

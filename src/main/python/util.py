@@ -70,30 +70,20 @@ class AbstractSolver(ABC):
         pass
 
     def part_1(self, data_file_path: str = None) -> Any:
-        init_timer = Timer()
-        data = self.init_data(data_file_path)
-        init_timer.stop()
+        timer = Timer()
+        answer = self.solve_part_1(self.init_data(data_file_path))
+        timer.stop()
 
-        solver_timer = Timer()
-        answer = self.solve_part_1(data)
-        solver_timer.stop()
-
-        self.print_info(part='Part 1', init_timer=init_timer,
-                        solver_timer=solver_timer, answer=answer)
+        self.print_info(part='Part 1', timer=timer, answer=answer)
 
         return answer
 
     def part_2(self, data_file_path: str = None) -> Any:
-        init_timer = Timer()
-        data = self.init_data(data_file_path)
-        init_timer.stop()
+        timer = Timer()
+        answer = self.solve_part_2(self.init_data(data_file_path))
+        timer.stop()
 
-        solver_timer = Timer()
-        answer = self.solve_part_2(data)
-        solver_timer.stop()
-
-        self.print_info(part='Part 2', init_timer=init_timer,
-                        solver_timer=solver_timer, answer=answer)
+        self.print_info(part='Part 2', timer=timer, answer=answer)
 
         return answer
 
@@ -105,13 +95,10 @@ class AbstractSolver(ABC):
         self.part_2(data_file_path)
 
     @staticmethod
-    def print_info(part: str, init_timer: Timer,
-                   solver_timer: Timer, answer: int) -> None:
+    def print_info(part: str, timer: Timer, answer: int) -> None:
         print(f'{part}\n'
-              f'\tElapsed Time\n'
-              f'\t\t  Init: {init_timer.elapsed_time()}\n'
-              f'\t\t   Run: {solver_timer.elapsed_time()}\n'
-              f'\t\tAnswer: {answer}')
+              f'    Elapsed Time: {timer.elapsed_time()}\n'
+              f'          Answer: {answer}')
 
     @staticmethod
     def get_data(day: str, data_file_path: str = None) -> list[str]:

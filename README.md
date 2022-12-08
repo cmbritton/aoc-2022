@@ -4,8 +4,10 @@ My solutions to Advent of Code (AoC) 2022 puzzles.
 
 Some programmers aim to solve each puzzle in as few lines of code as possible.
 Others create really cool animations of puzzle solutions. There are some
-extremely skilled people in both camps. I try to write understandable,
-maintainable, object-oriented code.
+extremely skilled people in both camps.
+
+I try to write understandable, maintainable, and extendable object-oriented
+code.
 
 ## Development Environment
 
@@ -34,7 +36,7 @@ Run a single puzzle with:
 
     pipenv run day08.py
 
-## Running a Unit Tests
+## Running Unit Tests
 
     pipenv run test
 
@@ -47,18 +49,18 @@ puzzle data, testing, outputting results, etc.
 Most puzzle solutions follow a pattern you can discern from the commit
 messages.
 
-Any commit whose message begins with "WIP" is a work-in-progress checkpoint.
+Any commit whose message begins with `WIP` is a work-in-progress checkpoint.
 That version may not even work.
 
-Commit messages that look like "Day 8 part 1 works" indicate the revision
+Commit messages that look like `Day 8 part 1 works` indicate the revision
 that first achieved the correct answer. It might be sloppy. It might be slow.
 
-Messages that contain the word "cleanup" indicate a revision where I removed
+Messages that contain the word `cleanup` indicate a revision where I removed
 commented out lines of code, print statements, etc.
 
-Messages with the word "refactor" mark a revision where I refactored to
-improve readability, performance, or use some language feature that I was
-not familiar with enough to use in my initial solution. 
+Messages with the word `refactor` mark a revision where I refactored the
+original solution to improve readability, performance, or use some language
+feature that I was not familiar with enough to use in my initial solution. 
 
 ## Results
 

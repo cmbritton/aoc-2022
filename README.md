@@ -2,15 +2,14 @@
 
 My solutions to Advent of Code (AoC) 2022 puzzles.
 
-I try to emphasize understandable, maintainable object-oriented code over a
-solution with the fewest lines of source code.
-
-<details>
-<summary>SPOILER ALERT</summary>
-This is a spoiler
-</details>
+Some programmers aim to solve each puzzle in as few lines of code as possible.
+Others create really cool animations of puzzle solutions. There are some
+extremely skilled people in both camps. I try to write understandable,
+maintainable, object-oriented code.
 
 ## Development Environment
+
+Here's what I use.
 
 ### Platform-Independent
 
@@ -24,17 +23,67 @@ This is a spoiler
 * [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install) running
   an [Ubuntu 20.04 LTS](https://ubuntu.com/) distribution.
 
-pipenv run Test
-pipenv run dayxx.py
-|Day|Part 1|Part 2|
-|---|--:|--:|
-|Day](https://adventofcode.com/2022)|<details><summary>SPOILER ALERT</summary><details><summary>Are you sure?</summary>spoiler</details></details>|bar|
+## Setup
+Edit the `.env` file to match your environment. Then, run:
 
-<table>
-    <tr>
-      <th>[Day](https://adventofcode.com/2022)</th>
-      <th colspan="2">Parts</th>
-    </tr>
-    <tr><th></th><th>Part 1</th><th>Part 2</th></tr>
-    <tr><td>Day 1: Calorie Counting</td><td>foo</td><td>bar</td></tr>
-</table>
+    pipenv install
+
+## Run a Daily Puzzle
+
+Run a single puzzle with:
+
+    pipenv run day08.py
+
+## Running a Unit Tests
+
+    pipenv run test
+
+## Code Evolution
+
+Most puzzle solutions follow a pattern you can discern from the commit
+messages.
+
+Any commit whose message begins with "WIP" is a work-in-progress checkpoint.
+That version may not even work.
+
+Commit messages that look like "Day 8 part 1 works" indicate the revision
+that first achieved the correct answer. It might be sloppy. It might be slow.
+
+Messages that contain the word "cleanup" indicate a revision where I removed
+commented out lines of code, print statements, etc.
+
+Messages with the word "refactor" mark a revision where I refactored to
+improve readability, performance, or use some language feature that I was
+not familiar with enough to use in my initial solution. 
+
+## Results
+
+No answers here! Just elapsed times for each puzzle solution.
+
+|Puzzle|Part 1 Elapsed Time|Part 2 Elapsed Time|
+|---|--:|--:|
+|[Day 1: Calorie Counting](https://adventofcode.com/2022/1)|1.52 milliseconds|1.01 milliseconds|
+|[Day 2: Rock Paper Scissors](https://adventofcode.com/2022/2)|17.54 milliseconds|9.60 milliseconds|
+|[Day 3: Rucksack Reorganization](https://adventofcode.com/2022/3)|1.06 milliseconds|695.10 microseconds|
+|[Day 4: Camp Cleanup](https://adventofcode.com/2022/4)|3.36 milliseconds|2.18 milliseconds|
+|[Day 5: Supply Stacks](https://adventofcode.com/2022/5)|1.65 milliseconds|902.90 microseconds|
+|[Day 6: Tuning Trouble](https://adventofcode.com/2022/6)|327.80 microseconds|1.43 milliseconds|
+|[Day 7: No Space Left On Device](https://adventofcode.com/2022/7)|1.82 milliseconds|2.13 milliseconds|
+|[Day 8: Treetop Tree House](https://adventofcode.com/2022/8)|36.40 milliseconds|31.27 milliseconds|
+|Day 9: Unavailable|Unsolved|Unsolved|
+|Day 10: Unavailable|Unsolved|Unsolved|
+|Day 11: Unavailable|Unsolved|Unsolved|
+|Day 12: Unavailable|Unsolved|Unsolved|
+|Day 13: Unavailable|Unsolved|Unsolved|
+|Day 14: Unavailable|Unsolved|Unsolved|
+|Day 15: Unavailable|Unsolved|Unsolved|
+|Day 16: Unavailable|Unsolved|Unsolved|
+|Day 17: Unavailable|Unsolved|Unsolved|
+|Day 18: Unavailable|Unsolved|Unsolved|
+|Day 19: Unavailable|Unsolved|Unsolved|
+|Day 20: Unavailable|Unsolved|Unsolved|
+|Day 21: Unavailable|Unsolved|Unsolved|
+|Day 22: Unavailable|Unsolved|Unsolved|
+|Day 23: Unavailable|Unsolved|Unsolved|
+|Day 24: Unavailable|Unsolved|Unsolved|
+|Day 25: Unavailable|Unsolved|Unsolved|

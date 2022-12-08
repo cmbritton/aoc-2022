@@ -40,6 +40,10 @@ Run a single puzzle with:
 
 ## Code Evolution
 
+The logic for each solution is in the `dayxx.init_data`, `dayxx.solve_part_1`,
+and `dayxx.solve_part_2` methods. Everything else is common code for reading
+puzzle data, testing, outputting results, etc.
+
 Most puzzle solutions follow a pattern you can discern from the commit
 messages.
 

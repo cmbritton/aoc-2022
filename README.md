@@ -26,15 +26,15 @@ This is a spoiler
 
 pipenv run Test
 pipenv run dayxx.py
-|Day|Parts
 |Day|Part 1|Part 2|
 |---|--:|--:|
-|Day 1|foo|bar|
+|Day](https://adventofcode.com/2022)|foo|bar|
 
 <table>
-  <thead>
-    <th>Day</th><th colspan="2">Parts</th>
-    <th></th><th>Part 1</th><th>Part 2</th>
-    <tr><td>Day 1</td><td>foo</td><td>bar</td></tr>
-  </thead>
+    <tr>
+      <th>[Day](https://adventofcode.com/2022)</th>
+      <th colspan="2">Parts</th>
+    </tr>
+    <tr><th></th><th>Part 1</th><th>Part 2</th></tr>
+    <tr><td>Day 1: Calorie Counting</td><td>foo</td><td>bar</td></tr>
 </table>

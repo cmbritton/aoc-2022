@@ -28,7 +28,7 @@ pipenv run Test
 pipenv run dayxx.py
 |Day|Part 1|Part 2|
 |---|--:|--:|
-|Day](https://adventofcode.com/2022)|foo|bar|
+|Day](https://adventofcode.com/2022)|<details><summary>SPOILER ALERT</summary><details><summary>Are you sure?</summary>spoiler</details></details>|bar|
 
 <table>
     <tr>

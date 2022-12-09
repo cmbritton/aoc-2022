@@ -40,7 +40,6 @@ class Head:
         self.y = y
 
     def move(self, move: Move) -> None:
-        # print(f'Move H from ({self.x}, {self.y}) to ', end='')
         if move.is_up():
             self.y += move.count
         elif move.is_down():
@@ -51,8 +50,6 @@ class Head:
             self.x += move.count
         else:
             raise RuntimeError(f'Unknown move: {move}')
-
-        # print(f'({self.x}, {self.y})')
 
     def is_e(self, tail: 'Tail'):
         return self.x > tail.x and self.y == tail.y
@@ -91,9 +88,7 @@ class Tail:
         self.add_visited((x, y))
 
     def move(self, head: Head) -> None:
-        # print(f'    Move T from ({self.x}, {self.y}) to ', end='')
         if self.is_adjacent_or_same(head):
-            # print(f'({self.x}, {self.y}) No move')
             return
         if head.is_e(self):
             self.move_e(head)
@@ -111,8 +106,6 @@ class Tail:
             self.move_s(head)
         elif head.is_se(self):
             self.move_se(head)
-        pass
-        # print(f'({self.x}, {self.y})')
 
     def move_e(self, head: Head):
         for x in range(self.x + 1, head.x):
@@ -213,10 +206,9 @@ class Tail:
     def is_adjacent_or_same(self, head: Head) -> bool:
         return head.x in range(self.x - 1, self.x + 2) and \
             head.y in range(self.y - 1, self.y + 2)
-    
+
     def add_visited(self, xy: tuple[int, int]):
         self.visited.add(xy)
-        print(f'added {xy}')
 
 
 class Solver(AbstractSolver):
@@ -233,29 +225,10 @@ class Solver(AbstractSolver):
         return [Move(x[0], int(x[1])) for x in [a.split() for a in data]]
 
     def solve_part_1(self, moves: Any) -> int:
-        min_x = min_y = max_x = max_y = 0
         for move in moves:
-            print(f'\nmoved H {move.direction} {move.count} from ({self.head.x}, {self.head.y}) to ', end='')
             self.head.move(move)
-            print(f'({self.head.x}, {self.head.y})')
-            x = self.tail.x
-            y = self.tail.y
             self.tail.move(self.head)
-            print(f'moved T from ({x}, {y}) to ', end='')
-            print(f'({self.tail.x}, {self.tail.y})')
-            assert self.tail.is_adjacent_or_same(self.head)
-            if move.count > 2:
-                assert self.tail.x == self.head.x or self.tail.y == self.head.y
-            if self.tail.x < min_x:
-                min_x = self.tail.x
-            if self.tail.x > max_x:
-                max_x = self.tail.x
-            if self.tail.y < min_y:
-                min_y = self.tail.y
-            if self.tail.y > max_y:
-                max_y = self.tail.y
 
-        # print(f'visited={list(sorted(self.tail.visited))}')
         return len(self.tail.visited)
 
     def solve_part_2(self, data: Any) -> int:

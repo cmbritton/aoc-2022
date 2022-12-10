@@ -77,7 +77,7 @@ No answers here! Just elapsed times for each puzzle solution.
 |[Day 7: No Space Left On Device](https://adventofcode.com/2022/7)|1.82 milliseconds|2.13 milliseconds|
 |[Day 8: Treetop Tree House](https://adventofcode.com/2022/8)|36.40 milliseconds|31.27 milliseconds|
 |[Day 9: Rope Bridge](https://adventofcode.com/2022/9)|36.41 milliseconds|Unsolved|
-|Day 10: Unavailable|Unsolved|Unsolved|
+|[Day 10: Cathode-Ray Tube](https://adventofcode.com/2022/10)|213.40 microseconds|Unsolved|
 |Day 11: Unavailable|Unsolved|Unsolved|
 |Day 12: Unavailable|Unsolved|Unsolved|
 |Day 13: Unavailable|Unsolved|Unsolved|

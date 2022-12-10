@@ -29,16 +29,53 @@ class Op:
         return self.op == 'addx'
 
 
+class Crt:
+    ROWS = 6
+    COLS = 40
+
+    cycle: int
+    pixels: list[list[str]]
+
+    sprite_pos: int
+
+    curr_row: int
+
+    def __init__(self) -> None:
+        self.pixels = [['.' for i in range(Crt.COLS)] for j in range(Crt.ROWS)]
+        self.cycle = 0
+        self.sprite_pos = 1
+        self.curr_row = -1
+
+    def draw(self, cycle: int, sprite_pos: int, update_sprite_pos: bool):
+        self.cycle = cycle
+        row = (cycle - 1) // Crt.COLS
+        col = (cycle - 1) % Crt.COLS
+        if row != self.curr_row:
+            self.curr_row = row
+            self.sprite_pos = 1
+        if col in [self.sprite_pos - 1, self.sprite_pos, self.sprite_pos + 1]:
+            self.pixels[row][col] = '#'
+
+        # if update_sprite_pos:
+        self.sprite_pos = sprite_pos
+
+    def render(self):
+        for row in self.pixels:
+            print(''.join(row))
+
+
 class Cpu:
     op: Op
     regx: int
     cycle: int
     signal_strengths: list[int]
+    crt: Crt
 
     def __init__(self) -> None:
         self.regx = 1
         self.cycle = 0
         self.signal_strengths = []
+        self.crt = Crt()
 
     def set_step(self, op: Op) -> None:
         self.op = op
@@ -52,19 +89,23 @@ class Cpu:
             raise RuntimeError(f'Unknown op: {self.op}')
 
     def execute_noop(self):
-        self.cycle += 1
+        self.increment_cycle(True)
         self.update_signal_strength()
 
     def execute_addx(self):
-        self.cycle += 1
-        self.update_signal_strength()
-        self.cycle += 1
+        self.increment_cycle(False)
         self.update_signal_strength()
         self.regx += self.op.arg
+        self.increment_cycle(True)
+        self.update_signal_strength()
 
     def update_signal_strength(self):
         if self.cycle == 20 or ((self.cycle - 20) % 40) == 0:
             self.signal_strengths.append(self.regx * self.cycle)
+
+    def increment_cycle(self, update_sprite_pos: bool):
+        self.cycle += 1
+        self.crt.draw(self.cycle, self.regx, update_sprite_pos)
 
 
 class Solver(AbstractSolver):
@@ -82,7 +123,12 @@ class Solver(AbstractSolver):
             cpu.execute()
         return sum(cpu.signal_strengths)
 
-    def solve_part_2(self, data: Any) -> int:
+    def solve_part_2(self, ops: Any) -> int:
+        cpu = Cpu()
+        for op in ops:
+            cpu.set_step(op)
+            cpu.execute()
+        cpu.crt.render()
         return 0
 
     def get_day(self) -> str:

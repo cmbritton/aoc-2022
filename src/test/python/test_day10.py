@@ -14,20 +14,26 @@ def test_part_1_example():
     assert answer == 13140
 
 
-def test_part_2_example():
-    data_file_path = os.path.join(os.environ.get('TEST_RESOURCES_DIR_PATH'),
-                                  f'day{day}-example.data')
-    solver = Solver()
-    answer = solver.part_2(data_file_path)
-    assert answer == -1
-
-
 def test_part_1():
     data_file_path = os.path.join(os.environ.get('RESOURCES_DIR_PATH'),
                                   f'day{day}.data')
     solver = Solver()
     answer = solver.part_1(data_file_path)
-    assert answer == -1
+    assert answer == 13440
+
+
+def test_part_2_example():
+    data_file_path = os.path.join(os.environ.get('TEST_RESOURCES_DIR_PATH'),
+                                  f'day{day}-example.data')
+    solver = Solver()
+    answer = solver.part_2(data_file_path)
+    expected = '\n##..##..##..##..##..##..##..##..##..##..\n' \
+               '###...###...###...###...###...###...###.\n' \
+               '####....####....####....####....####....\n' \
+               '#####.....#####.....#####.....#####.....\n' \
+               '######......######......######......####\n' \
+               '#######.......#######.......#######.....'
+    assert answer == expected
 
 
 def test_part_2():
@@ -35,4 +41,10 @@ def test_part_2():
                                   f'day{day}.data')
     solver = Solver()
     answer = solver.part_2(data_file_path)
-    assert answer == -1
+    expected = '\n###..###..####..##..###...##..####..##..\n' \
+               '#..#.#..#....#.#..#.#..#.#..#....#.#..#.\n' \
+               '#..#.###....#..#....#..#.#..#...#..#..#.\n' \
+               '###..#..#..#...#.##.###..####..#...####.\n' \
+               '#....#..#.#....#..#.#.#..#..#.#....#..#.\n' \
+               '#....###..####..###.#..#.#..#.####.#..#.'
+    assert answer == expected

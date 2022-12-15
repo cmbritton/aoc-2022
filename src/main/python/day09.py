@@ -11,12 +11,13 @@ from src.main.python.util import AbstractSolver
 
 
 class Move:
-    direction: str
-    count: int
 
     def __init__(self, direction: str, count: int) -> None:
         self.direction = direction
         self.count = count
+
+    def __repr__(self):
+        return f'{self.direction} {self.count}'
 
     def is_up(self):
         return self.direction == 'U'
@@ -31,214 +32,396 @@ class Move:
         return self.direction == 'R'
 
 
-class Head:
-    x: int
-    y: int
+class Knot:
+    last_id: int = 0
 
     def __init__(self, x: int, y: int) -> None:
         self.x = x
         self.y = y
+        self.prev = None
+        self.next = None
+        self.visited = set()
+        self.add_visited((x, y))
+        self.id = Knot.last_id
+        Knot.last_id += 1
+
+    def __repr__(self):
+        return f'id={self.id} ({self.x:>3}, {self.y:>3})'
+
+    def is_head(self):
+        return self.prev is None
+
+    def is_tail(self):
+        return self.next is None
+
+    def add_knot(self, knot: 'Knot'):
+        self.next = knot
+        knot.prev = self
 
     def move(self, move: Move) -> None:
         if move.is_up():
-            self.y += move.count
+            self._move_up(move.count)
         elif move.is_down():
-            self.y -= move.count
+            self._move_down(move.count)
         elif move.is_left():
-            self.x -= move.count
+            self._move_left(move.count)
         elif move.is_right():
-            self.x += move.count
+            self._move_right(move.count)
         else:
             raise RuntimeError(f'Unknown move: {move}')
 
-    def is_e(self, tail: 'Tail'):
-        return self.x > tail.x and self.y == tail.y
+    def _move_up(self, count: int):
+        for y in range(self.y + 1, self.y + count + 1):
+            self.y += 1
+            self.follow()
+            solver.plot_points()
 
-    def is_n(self, tail: 'Tail'):
-        return self.x == tail.x and self.y > tail.y
+    def _move_down(self, count: int):
+        for y in range(self.y - 1, self.y - count - 1, -1):
+            self.y -= 1
+            self.follow()
+            solver.plot_points()
 
-    def is_w(self, tail: 'Tail'):
-        return self.x < tail.x and self.y == tail.y
+    def _move_right(self, count: int):
+        for x in range(self.x + 1, self.x + count + 1):
+            self.x += 1
+            self.follow()
+            solver.plot_points()
 
-    def is_s(self, tail: 'Tail'):
-        return self.x == tail.x and self.y < tail.y
+    def _move_left(self, count: int):
+        for x in range(self.x - 1, self.x - count - 1, -1):
+            self.x -= 1
+            self.follow()
+            solver.plot_points()
 
-    def is_ne(self, tail: 'Tail'):
-        return self.x > tail.x and self.y > tail.y
+    def is_e(self, knot: 'Knot'):
+        return self.x > knot.x and self.y == knot.y
 
-    def is_nw(self, tail: 'Tail'):
-        return self.x < tail.x and self.y > tail.y
+    def is_n(self, knot: 'Knot'):
+        return self.x == knot.x and self.y > knot.y
 
-    def is_sw(self, tail: 'Tail'):
-        return self.x < tail.x and self.y < tail.y
+    def is_w(self, knot: 'Knot'):
+        return self.x < knot.x and self.y == knot.y
 
-    def is_se(self, tail: 'Tail'):
-        return self.x > tail.x and self.y < tail.y
+    def is_s(self, knot: 'Knot'):
+        return self.x == knot.x and self.y < knot.y
 
+    def is_ne(self, knot: 'Knot'):
+        return self.x > knot.x and self.y > knot.y
 
-class Tail:
-    x: int
-    y: int
-    visited: set[tuple[int, int]]
+    def is_nw(self, knot: 'Knot'):
+        return self.x < knot.x and self.y > knot.y
 
-    def __init__(self, x: int, y: int) -> None:
-        self.x = x
-        self.y = y
-        self.visited = set()
-        self.add_visited((x, y))
+    def is_sw(self, knot: 'Knot'):
+        return self.x < knot.x and self.y < knot.y
 
-    def move(self, head: Head) -> None:
-        if self.is_adjacent_or_same(head):
+    def is_se(self, knot: 'Knot'):
+        return self.x > knot.x and self.y < knot.y
+
+    def follow(self) -> None:
+        if self.is_head():
+            # print(f'({self.x:>3}, {self.y:>3})')
+            self.next.follow()
             return
-        if head.is_e(self):
-            self.move_e(head)
-        elif head.is_ne(self):
-            self.move_ne(head)
-        elif head.is_n(self):
-            self.move_n(head)
-        elif head.is_nw(self):
-            self.move_nw(head)
-        elif head.is_w(self):
-            self.move_w(head)
-        elif head.is_sw(self):
-            self.move_sw(head)
-        elif head.is_s(self):
-            self.move_s(head)
-        elif head.is_se(self):
-            self.move_se(head)
+        if self.is_adjacent_or_same():
+            return
+        if self.prev.is_e(self):
+            self._move_e()
+        elif self.prev.is_ne(self):
+            self._move_ne()
+        elif self.prev.is_n(self):
+            self._move_n()
+        elif self.prev.is_nw(self):
+            self._move_nw()
+        elif self.prev.is_w(self):
+            self._move_w()
+        elif self.prev.is_sw(self):
+            self._move_sw()
+        elif self.prev.is_s(self):
+            self._move_s()
+        elif self.prev.is_se(self):
+            self._move_se()
 
-    def move_e(self, head: Head):
-        for x in range(self.x + 1, head.x):
+        if not self.is_tail():
+            self.next.follow()
+
+    def is_diagonal(self):
+        # if self.is_head() and self.next.is_tail() or \
+        #         self.is_tail() and self.prev.is_head():
+        #     return False
+        if abs(self.x - self.prev.x) == abs(self.y - self.prev.y):
+            return True
+        return False
+
+    def _move_e(self):
+        for x in range(self.x + 1, self.prev.x):
             self.add_visited((x, self.y))
-        self.x = head.x - 1
-        self.y = head.y
+        self.x = self.prev.x - 1
+        self.y = self.prev.y
+        self.add_visited((self.x, self.y))
 
-    def move_ene(self, head: Head):
-        for x in range(self.x + 1, head.x):
-            self.add_visited((x, head.y))
-        self.x = head.x - 1
-        self.y = head.y
+    def _move_ene(self):
+        for x in range(self.x + 1, self.prev.x):
+            self.add_visited((x, self.prev.y))
+        self.x = self.prev.x - 1
+        self.y = self.prev.y
+        self.add_visited((self.x, self.y))
 
-    def move_ne(self, head: Head):
-        if abs(self.y - head.y) == 1:
-            self.move_ene(head)
+    def _move_ne(self):
+        if self.is_diagonal():
+            self._move_ne_exactly()
+        elif abs(self.y - self.prev.y) == 1:
+            self._move_ene()
         else:
-            self.move_nne(head)
+            self._move_nne()
 
-    def move_nne(self, head: Head):
-        for y in range(self.y + 1, head.y):
-            self.add_visited((head.x, y))
-        self.x = head.x
-        self.y = head.y - 1
+    def _move_ne_exactly(self):
+        for x in range(self.x + 1, self.prev.x):
+            for y in range(self.y + 1, self.prev.y):
+                self.add_visited((x, y))
+        self.x = self.prev.x - 1
+        self.y = self.prev.y - 1
+        self.add_visited((self.x, self.y))
 
-    def move_n(self, head: Head):
-        for y in range(self.y + 1, head.y):
+    def _move_nne(self):
+        for y in range(self.y + 1, self.prev.y):
+            self.add_visited((self.prev.x, y))
+        self.x = self.prev.x
+        self.y = self.prev.y - 1
+        self.add_visited((self.x, self.y))
+
+    def _move_n(self):
+        for y in range(self.y + 1, self.prev.y):
             self.add_visited((self.x, y))
-        self.x = head.x
-        self.y = head.y - 1
+        self.x = self.prev.x
+        self.y = self.prev.y - 1
+        self.add_visited((self.x, self.y))
 
-    def move_nnw(self, head: Head):
-        for y in range(self.y + 1, head.y):
-            self.add_visited((head.x, y))
-        self.x = head.x
-        self.y = head.y - 1
+    def _move_nnw(self):
+        for y in range(self.y + 1, self.prev.y):
+            self.add_visited((self.prev.x, y))
+        self.x = self.prev.x
+        self.y = self.prev.y - 1
+        self.add_visited((self.x, self.y))
 
-    def move_nw(self, head: Head):
-        if abs(self.x - head.x) == 1:
-            self.move_nnw(head)
+    def _move_nw(self):
+        if self.is_diagonal():
+            self._move_nw_exactly()
+        elif abs(self.x - self.prev.x) == 1:
+            self._move_nnw()
         else:
-            self.move_wnw(head)
+            self._move_wnw()
 
-    def move_wnw(self, head: Head):
-        for x in range(self.x - 1, head.x, -1):
-            self.add_visited((x, head.y))
-        self.x = head.x + 1
-        self.y = head.y
+    def _move_nw_exactly(self):
+        for x in range(self.x - 1, self.prev.x, + 1):
+            for y in range(self.y + 1, self.prev.y):
+                self.add_visited((x, y))
+        self.x = self.prev.x + 1
+        self.y = self.prev.y - 1
+        self.add_visited((self.x, self.y))
 
-    def move_w(self, head: Head):
-        for x in range(self.x - 1, head.x, -1):
+    def _move_wnw(self):
+        for x in range(self.x - 1, self.prev.x, -1):
+            self.add_visited((x, self.prev.y))
+        self.x = self.prev.x + 1
+        self.y = self.prev.y
+        self.add_visited((self.x, self.y))
+
+    def _move_w(self):
+        for x in range(self.x - 1, self.prev.x, -1):
             self.add_visited((x, self.y))
-        self.x = head.x + 1
-        self.y = head.y
+        self.x = self.prev.x + 1
+        self.y = self.prev.y
+        self.add_visited((self.x, self.y))
 
-    def move_wsw(self, head: Head):
-        for x in range(self.x - 1, head.x, -1):
-            self.add_visited((x, head.y))
-        self.x = head.x + 1
-        self.y = head.y
+    def _move_wsw(self):
+        for x in range(self.x - 1, self.prev.x, -1):
+            self.add_visited((x, self.prev.y))
+        self.x = self.prev.x + 1
+        self.y = self.prev.y
+        self.add_visited((self.x, self.y))
 
-    def move_sw(self, head: Head):
-        if abs(self.y - head.y) == 1:
-            self.move_wsw(head)
+    def _move_sw(self):
+        if self.is_diagonal():
+            self._move_sw_exactly()
+        if abs(self.y - self.prev.y) == 1:
+            self._move_wsw()
         else:
-            self.move_ssw(head)
+            self._move_ssw()
 
-    def move_ssw(self, head: Head):
-        for y in range(self.y - 1, head.y, -1):
-            self.add_visited((head.x, y))
-        self.x = head.x
-        self.y = head.y + 1
+    def _move_sw_exactly(self):
+        for x in range(self.x - 1, self.prev.x, + 1):
+            for y in range(self.y - 1, self.prev.y + 1):
+                self.add_visited((x, y))
+        self.x = self.prev.x + 1
+        self.y = self.prev.y + 1
+        self.add_visited((self.x, self.y))
 
-    def move_s(self, head: Head):
-        for y in range(self.y - 1, head.y, - 1):
+    def _move_ssw(self):
+        for y in range(self.y - 1, self.prev.y, -1):
+            self.add_visited((self.prev.x, y))
+        self.x = self.prev.x
+        self.y = self.prev.y + 1
+        self.add_visited((self.x, self.y))
+
+    def _move_s(self):
+        for y in range(self.y - 1, self.prev.y, - 1):
             self.add_visited((self.x, y))
-        self.x = head.x
-        self.y = head.y + 1
+        self.x = self.prev.x
+        self.y = self.prev.y + 1
+        self.add_visited((self.x, self.y))
 
-    def move_sse(self, head: Head):
-        for y in range(self.y - 1, head.y, -1):
-            self.add_visited((head.x, y))
-        self.x = head.x
-        self.y = head.y + 1
+    def _move_sse(self):
+        for y in range(self.y - 1, self.prev.y, -1):
+            self.add_visited((self.prev.x, y))
+        self.x = self.prev.x
+        self.y = self.prev.y + 1
+        self.add_visited((self.x, self.y))
 
-    def move_se(self, head: Head):
-        if abs(self.x - head.x) == 1:
-            self.move_sse(head)
+    def _move_se(self):
+        if self.is_diagonal():
+            self._move_se_exactly()
+        if abs(self.x - self.prev.x) == 1:
+            self._move_sse()
         else:
-            self.move_ese(head)
+            self._move_ese()
 
-    def move_ese(self, head: Head):
-        for x in range(self.x + 1, head.x):
-            self.add_visited((x, head.y))
-        self.x = head.x - 1
-        self.y = head.y
+    def _move_se_exactly(self):
+        for x in range(self.x + 1, self.prev.x, - 1):
+            for y in range(self.y - 1, self.prev.y + 1):
+                self.add_visited((x, y))
+        self.x = self.prev.x - 1
+        self.y = self.prev.y + 1
+        self.add_visited((self.x, self.y))
 
-    def is_adjacent_or_same(self, head: Head) -> bool:
-        return head.x in range(self.x - 1, self.x + 2) and \
-            head.y in range(self.y - 1, self.y + 2)
+    def _move_ese(self):
+        for x in range(self.x + 1, self.prev.x):
+            self.add_visited((x, self.prev.y))
+        self.x = self.prev.x - 1
+        self.y = self.prev.y
+        self.add_visited((self.x, self.y))
+
+    def is_adjacent_or_same(self) -> bool:
+        return self.prev.x in range(self.x - 1, self.x + 2) and \
+            self.prev.y in range(self.y - 1, self.y + 2)
 
     def add_visited(self, xy: tuple[int, int]):
-        self.visited.add(xy)
+        if self.is_tail():
+            self.visited.add(xy)
+            # print(f'added {xy}')
 
 
 class Solver(AbstractSolver):
-    head: Head
-    tail: Tail
 
     def __init__(self) -> None:
         super().__init__()
-        self.head = Head(0, 0)
-        self.tail = Tail(0, 0)
+        self.head = None
 
     def init_data(self, data_file_path: str = None) -> Any:
         data = self.get_data(self.get_day(), data_file_path)
         return [Move(x[0], int(x[1])) for x in [a.split() for a in data]]
 
+    def init_rope(self, knot_count: int):
+        self.head = Knot(0, 0)
+        for _ in range(1, knot_count):
+            knot = Knot(0, 0)
+            self.get_tail().add_knot(knot)
+
+    def get_tail(self) -> Knot:
+        knot = self.head
+        while not knot.is_tail():
+            knot = knot.next
+        return knot
+
+    def get_points(self):
+        points = []
+        knot = self.head
+        while knot is not None:
+            points.append((knot.x, knot.y))
+            knot = knot.next
+        return points
+
+    def plot_points(self):
+        if 1 == 1:
+            return
+        tail = self.get_tail()
+        for y in range(20, -21, -1):
+            for x in range(-20, 21):
+                if x == 0 and y == 0:
+                    c = '+ '
+                elif x == 0:
+                    c = '| '
+                elif y == 0:
+                    c = '- '
+                else:
+                    c = '. '
+                knot = self.head
+                while knot is not None:
+                    if (x, y) == (knot.x, knot.y):
+                        if knot.is_head():
+                            c = 'H '
+                        elif knot.is_tail():
+                            c = 'T '
+                        else:
+                            c = f'{str(knot.id)} '
+                        break
+                    elif (x, y) in tail.visited:
+                        c = '# '
+                    knot = knot.next
+                print(c, end='')
+            print('')
+        print('')
+        pass
+
+    def plot_rope(self):
+        self.plot_points()
+        print('')
+
+    def print_rope(self):
+        knot = self.head
+        while knot is not None:
+            print(f'{knot}, ', end='')
+            knot = knot.next
+        print('')
+
     def solve_part_1(self, moves: Any) -> int:
+        global solver
+        solver = self
+        self.init_rope(2)
         for move in moves:
             self.head.move(move)
-            self.tail.move(self.head)
 
-        return len(self.tail.visited)
+        return len(self.get_tail().visited)
 
-    def solve_part_2(self, data: Any) -> int:
-        return 0
+    # 2448 is too low
+    # 2504 is wrong
+    # 2505 is wrong
+    # 2520 is too high
+    # 2531 is wrong
+    # 2557 is too high
+    def solve_part_2(self, moves: Any) -> int:
+        global solver
+        solver = self
+        self.init_rope(10)
+        for move in moves:
+            # print(move)
+            self.head.move(move)
+            self.head.follow()
+            # self.plot_rope()
+            # self.print_rope()
+            # print(self.get_tail().visited)
+
+        return len(self.get_tail().visited)
 
     def get_day(self) -> str:
         return os.path.basename(__file__)[3:5]
 
 
+solver = None
+
+
 def main() -> None:
+    global solver
     solver = Solver()
     solver.run()
 

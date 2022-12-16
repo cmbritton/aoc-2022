@@ -10,9 +10,6 @@ from typing import Any
 from src.main.python.util import AbstractSolver
 
 
-step = 0
-
-
 class Move:
 
     def __init__(self, direction: str, count: int) -> None:
@@ -77,25 +74,21 @@ class Knot:
         for y in range(self.y + 1, self.y + count + 1):
             self.y += 1
             self.follow()
-            solver.plot_points()
 
     def _move_down(self, count: int):
         for y in range(self.y - 1, self.y - count - 1, -1):
             self.y -= 1
             self.follow()
-            solver.plot_points()
 
     def _move_right(self, count: int):
         for x in range(self.x + 1, self.x + count + 1):
             self.x += 1
             self.follow()
-            solver.plot_points()
 
     def _move_left(self, count: int):
         for x in range(self.x - 1, self.x - count - 1, -1):
             self.x -= 1
             self.follow()
-            solver.plot_points()
 
     def is_e_of(self, knot: 'Knot'):
         return self.x > knot.x and self.y == knot.y
@@ -123,7 +116,6 @@ class Knot:
 
     def follow(self) -> None:
         if self.is_head():
-            # print(f'({self.x:>3}, {self.y:>3})')
             self.next.follow()
             return
         if self.is_adjacent_or_same():
@@ -149,28 +141,21 @@ class Knot:
             self.next.follow()
 
     def is_diagonal(self):
-        # if self.is_head() and self.next.is_tail() or \
-        #         self.is_tail() and self.prev.is_head():
-        #     return False
         if abs(self.x - self.prev.x) == abs(self.y - self.prev.y):
             return True
         return False
 
     def _move_e(self):
+        self._move_e_near_x()
+
+    def _move_e_near_x(self):
         for x in range(self.x + 1, self.prev.x):
             self.add_visited((x, self.prev.y))
         self.x = self.prev.x - 1
         self.y = self.prev.y
-        if self.id == 9 and (self.x, self.y) not in self.visited:
-            print(f'missed visit {(self.x, self.y)} in _move_e')
 
     def _move_ene(self):
-        for x in range(self.x + 1, self.prev.x):
-            self.add_visited((x, self.prev.y))
-        self.x = self.prev.x - 1
-        self.y = self.prev.y
-        if self.id == 9 and (self.x, self.y) not in self.visited:
-            print(f'missed visit {(self.x, self.y)} in _move_ene')
+        self._move_e_near_x()
 
     def _move_ne(self):
         if self.is_diagonal():
@@ -181,36 +166,26 @@ class Knot:
             self._move_nne()
 
     def _move_ne_exactly(self):
-        for x, y in zip(range(self.x + 1, self.prev.x), range(self.y + 1, self.prev.y)):
+        for x, y in zip(range(self.x + 1, self.prev.x),
+                        range(self.y + 1, self.prev.y)):
             self.add_visited((x, y))
         self.x = self.prev.x - 1
         self.y = self.prev.y - 1
-        if self.id == 9 and (self.x, self.y) not in self.visited:
-            print(f'missed visit {(self.x, self.y)} in _move_ne_exactly')
+
+    def _move_n_near_y(self):
+        for y in range(self.y + 1, self.prev.y):
+            self.add_visited((self.prev.x, y))
+        self.x = self.prev.x
+        self.y = self.prev.y - 1
 
     def _move_nne(self):
-        for y in range(self.y + 1, self.prev.y):
-            self.add_visited((self.prev.x, y))
-        self.x = self.prev.x
-        self.y = self.prev.y - 1
-        if self.id == 9 and (self.x, self.y) not in self.visited:
-            print(f'missed visit {(self.x, self.y)} in _move_nne')
+        self._move_n_near_y()
 
     def _move_n(self):
-        for y in range(self.y + 1, self.prev.y):
-            self.add_visited((self.x, y))
-        self.x = self.prev.x
-        self.y = self.prev.y - 1
-        if self.id == 9 and (self.x, self.y) not in self.visited:
-            print(f'missed visit {(self.x, self.y)} in _move_n')
+        self._move_n_near_y()
 
     def _move_nnw(self):
-        for y in range(self.y + 1, self.prev.y):
-            self.add_visited((self.prev.x, y))
-        self.x = self.prev.x
-        self.y = self.prev.y - 1
-        if self.id == 9 and (self.x, self.y) not in self.visited:
-            print(f'missed visit {(self.x, self.y)} in _move_nnw')
+        self._move_n_near_y()
 
     def _move_nw(self):
         if self.is_diagonal():
@@ -221,41 +196,26 @@ class Knot:
             self._move_wnw()
 
     def _move_nw_exactly(self):
-        for x, y in zip(range(self.x - 1, self.prev.x, -1), range(self.y + 1, self.prev.y)):
+        for x, y in zip(range(self.x - 1, self.prev.x, -1),
+                        range(self.y + 1, self.prev.y)):
             self.add_visited((x, y))
         self.x = self.prev.x + 1
         self.y = self.prev.y - 1
-        if self.id == 9 and (self.x, self.y) not in self.visited:
-            print(f'missed visit {(self.x, self.y)} in _move_nw_exactly')
+
+    def _move_w_near_x(self):
+        for x in range(self.x - 1, self.prev.x, -1):
+            self.add_visited((x, self.prev.y))
+        self.x = self.prev.x + 1
+        self.y = self.prev.y
 
     def _move_wnw(self):
-        for x in range(self.x - 1, self.prev.x, -1):
-            self.add_visited((x, self.prev.y))
-        self.x = self.prev.x + 1
-        self.y = self.prev.y
-        if self.id == 9 and (self.x, self.y) not in self.visited:
-            print(f'missed visit {(self.x, self.y)} in _move_wnw')
+        self._move_w_near_x()
 
     def _move_w(self):
-        for x in range(self.x - 1, self.prev.x, -1):
-            self.add_visited((x, self.y))
-        self.x = self.prev.x + 1
-        self.y = self.prev.y
-        if self.id == 9 and (self.x, self.y) not in self.visited:
-            print(f'missed visit {(self.x, self.y)} in _move_w')
+        self._move_w_near_x()
 
     def _move_wsw(self):
-        # if self.id == 9:
-        #     print(f'self: {self.x, self.y}, prev: {self.prev.x, self.prev.y}')
-        for x in range(self.x - 1, self.prev.x, -1):
-            self.add_visited((x, self.prev.y))
-            # if self.id == 9:
-            #     print(f'\tloop adds {(x, self.prev.y)}')
-        self.x = self.prev.x + 1
-        self.y = self.prev.y
-        if self.id == 9 and (self.x, self.y) not in self.visited:
-            print(f'missed visit {(self.x, self.y)} in _move_wsw')
-        self.add_visited((self.x, self.y))
+        self._move_w_near_x()
 
     def _move_sw(self):
         if self.is_diagonal():
@@ -266,36 +226,26 @@ class Knot:
             self._move_ssw()
 
     def _move_sw_exactly(self):
-        for x, y in zip(range(self.x - 1, self.prev.x, -1), range(self.y - 1, self.prev.y, -1)):
+        for x, y in zip(range(self.x - 1, self.prev.x, -1),
+                        range(self.y - 1, self.prev.y, -1)):
             self.add_visited((x, y))
         self.x = self.prev.x + 1
         self.y = self.prev.y + 1
-        if self.id == 9 and (self.x, self.y) not in self.visited:
-            print(f'missed visit {(self.x, self.y)} in _move_sw_exactly')
+
+    def _move_s_near_y(self):
+        for y in range(self.y - 1, self.prev.y, -1):
+            self.add_visited((self.prev.x, y))
+        self.x = self.prev.x
+        self.y = self.prev.y + 1
 
     def _move_ssw(self):
-        for y in range(self.y - 1, self.prev.y, -1):
-            self.add_visited((self.prev.x, y))
-        self.x = self.prev.x
-        self.y = self.prev.y + 1
-        if self.id == 9 and (self.x, self.y) not in self.visited:
-            print(f'missed visit {(self.x, self.y)} in _move_ssw')
+        self._move_s_near_y()
 
     def _move_s(self):
-        for y in range(self.y - 1, self.prev.y, - 1):
-            self.add_visited((self.x, y))
-        self.x = self.prev.x
-        self.y = self.prev.y + 1
-        if self.id == 9 and (self.x, self.y) not in self.visited:
-            print(f'missed visit {(self.x, self.y)} in _move_s')
+        self._move_s_near_y()
 
     def _move_sse(self):
-        for y in range(self.y - 1, self.prev.y, -1):
-            self.add_visited((self.prev.x, y))
-        self.x = self.prev.x
-        self.y = self.prev.y + 1
-        if self.id == 9 and (self.x, self.y) not in self.visited:
-            print(f'missed visit {(self.x, self.y)} in _move_sse')
+        self._move_s_near_y()
 
     def _move_se(self):
         if self.is_diagonal():
@@ -306,20 +256,14 @@ class Knot:
             self._move_ese()
 
     def _move_se_exactly(self):
-        for x, y in zip(range(self.x + 1, self.prev.x), range(self.y - 1, self.prev.y, -1)):
+        for x, y in zip(range(self.x + 1, self.prev.x),
+                        range(self.y - 1, self.prev.y, -1)):
             self.add_visited((x, y))
         self.x = self.prev.x - 1
         self.y = self.prev.y + 1
-        if self.id == 9 and (self.x, self.y) not in self.visited:
-            print(f'missed visit {(self.x, self.y)} in _move_se_exactly')
 
     def _move_ese(self):
-        for x in range(self.x + 1, self.prev.x):
-            self.add_visited((x, self.prev.y))
-        self.x = self.prev.x - 1
-        self.y = self.prev.y
-        if self.id == 9 and (self.x, self.y) not in self.visited:
-            print(f'missed visit {(self.x, self.y)} in _move_ese')
+        self._move_e_near_x()
 
     def is_adjacent_or_same(self) -> bool:
         return self.prev.x in range(self.x - 1, self.x + 2) and \
@@ -353,95 +297,18 @@ class Solver(AbstractSolver):
             knot = knot.next
         return knot
 
-    def get_points(self):
-        points = []
-        knot = self.head
-        while knot is not None:
-            points.append((knot.x, knot.y))
-            knot = knot.next
-        return points
-
-    def plot_points(self):
-        global step
-        if step < 408 or step > 0:
-            return
-        print(f'Move {self.move}')
-
-        for y in range(20, -21, -1):
-            for x in range(-20, 21):
-                c = '\t'
-                # if x == 0 and y == 0:
-                #     c = '+ '
-                # elif x == 0:
-                #     c = '| '
-                # elif y == 0:
-                #     c = '- '
-                # else:
-                #     c = '. '
-                knot = self.head
-                while knot is not None:
-                    if (x, y) == (0, 0):
-                        c = '(0, 0)'
-                    elif (x, y) == (knot.x, knot.y):
-                        c = f'id={knot.id} {(knot.x, knot.y)}\t'
-                        # if knot.is_head():
-                        #     c = 'H '
-                        # elif knot.is_tail():
-                        #     c = 'T '
-                        # else:
-                        #     c = f'{str(knot.id)} '
-                        break
-                    # elif (x, y) in tail.visited:
-                    #     c = '# '
-                    knot = knot.next
-                print(c, end='')
-            print('')
-        print('')
-        pass
-
-    def plot_rope(self):
-        self.plot_points()
-        print('')
-
-    def print_rope(self):
-        knot = self.head
-        while knot is not None:
-            print(f'{knot}, ', end='')
-            knot = knot.next
-        print('')
-
     def solve_part_1(self, moves: Any) -> int:
-        # return 0
-        global solver
-        solver = self
         self.init_rope(2)
         for move in moves:
             self.head.move(move)
 
         return len(self.get_tail().visited)
 
-    # 2448 is too low
-    # 2504 is wrong
-    # 2505 is wrong
-    # 2506 is wrong
-    # 2510 is wrong
-    # 2520 is too high
-    # 2531 is wrong
-    # 2557 is too high
     def solve_part_2(self, moves: Any) -> int:
-        global solver, step
-        solver = self
-        Knot.last_id = 0
         self.init_rope(10)
         for move in moves:
             self.move = move
-            step += 1
-            # print(move)
             self.head.move(move)
-            self.head.follow()
-            # self.plot_rope()
-            # self.print_rope()
-            # print(self.get_tail().visited)
 
         return len(self.get_tail().visited)
 
@@ -449,11 +316,7 @@ class Solver(AbstractSolver):
         return os.path.basename(__file__)[3:5]
 
 
-solver = None
-
-
 def main() -> None:
-    global solver
     solver = Solver()
     solver.run()
 

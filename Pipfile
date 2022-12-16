@@ -21,10 +21,10 @@ tqdm = "*"
 
 [dev-packages]
 flake8 = "*"
-pytest = "==7.1.*"
-pytest-cov = "==3.0.*"
-pytest-html = "==3.1.*"
-pytest-mock = "==3.8.*"
+pytest = "*"
+pytest-cov = "*"
+pytest-html = "*"
+pytest-mock = "*"
 sphinx = "*"
 sphinx-autodoc-typehints = "*"
 
@@ -37,4 +37,4 @@ lint = "flake8 --max-line-length=80 --max-complexity=6 src"
 test = "python -m pytest --durations=5 --html=build/tests/unit-test-report.html --self-contained-html --cov=src --cov-report=term-missing --cov-report=html:build/coverage -v --junit-xml build/tests/pytest_results.xml src/test/python"
 
 [requires]
-python_version = "3.9"
+python_version = "3.11"

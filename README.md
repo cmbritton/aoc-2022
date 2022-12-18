@@ -78,7 +78,7 @@ No answers here! Just elapsed times for each puzzle solution.
 |[Day 8: Treetop Tree House](https://adventofcode.com/2022/8)|36.40 milliseconds|31.27 milliseconds|
 |[Day 9: Rope Bridge](https://adventofcode.com/2022/9)|22.31 milliseconds|90.08 milliseconds|
 |[Day 10: Cathode-Ray Tube](https://adventofcode.com/2022/10)|366.30 microseconds|371.90 microseconds|
-|[Day 11: Monkey in the Middle](https://adventofcode.com/2022/11)|91.81 milliseconds|Unsolved|
+|[Day 11: Monkey in the Middle](https://adventofcode.com/2022/11)|6.00 milliseconds|2.99 seconds|
 |Day 12: Unavailable|Unsolved|Unsolved|
 |Day 13: Unavailable|Unsolved|Unsolved|
 |Day 14: Unavailable|Unsolved|Unsolved|

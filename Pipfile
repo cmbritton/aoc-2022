@@ -4,20 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-bitarray = "*"
-cycler = "*"
-fonttools = "*"
-jupyter = "*"
-kiwisolver = "*"
-matplotlib = "*"
-numpy = "*"
-packaging = "*"
-psutil = "*"
-pyparsing = "*"
-python-dateutil = "*"
-scipy = "*"
-six = "*"
-tqdm = "*"
 
 [dev-packages]
 flake8 = "*"

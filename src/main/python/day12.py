@@ -5,18 +5,31 @@ Day 12: Hill Climbing Algorithm
 https://adventofcode.com/2022/day/12
 """
 import os.path
-from dataclasses import dataclass
 from typing import Any
-import matplotlib.pyplot as plt
-
-import networkx as nx
 
 from src.main.python.util import AbstractSolver
 
 
-@dataclass
-class MyData:
-    value: str
+class Node:
+
+    def __init__(self, name, location) -> None:
+        self.name = name
+        self.location = location
+        self.nodes = set()
+
+    def __key(self):
+        return self.name, self.location
+
+    def __hash__(self) -> int:
+        return hash(self.__key())
+
+    def __eq__(self, o: object) -> bool:
+        if isinstance(o, Node):
+            return self.__key() == o.__key()
+        return NotImplemented
+
+    def __repr__(self) -> str:
+        return f'{self.name} {self.location}'
 
 
 class Solver(AbstractSolver):
@@ -41,59 +54,106 @@ class Solver(AbstractSolver):
             indices.append((r, c - 1))
         return indices
 
-    def get_weight(self, u, v, p):
-        print(f'u: {u}, v: {v}, weight: {p["weight"]}')
-        return p['weight']
+    def get_distance(self, n1: Node, n2: Node):
+        if n1.name == 'S':
+            n1v = ord('a')
+        elif n1.name == 'E':
+            n1v = ord('z')
+        else:
+            n1v = ord(n1.name)
+
+        if n2.name == 'S':
+            n2v = ord('a')
+        elif n2.name == 'E':
+            n2v = ord('z')
+        else:
+            n2v = ord(n2.name)
+
+        return n2v - n1v + 30
 
     def build_graph(self, data):
-        g = nx.MultiDiGraph()
+        nodes = []
         for r in range(len(data)):
             for c in range(len(data[0])):
-                label = self.get_label(data, r, c)
+                node = Node(data[r][c], (r, c))
+                if node in nodes:
+                    node = nodes[nodes.index(node)]
+                else:
+                    nodes.append(node)
                 for nr, nc in self.get_neighbor_indexes(data, r, c):
-                    nl = self.get_label(data, nr, nc)
-
-                    if data[r][c].startswith('S'):
-                        weight = ord(data[nr][nc]) - ord('a')
-                    elif data[r][c].startswith('E'):
-                        weight = ord(data[nr][nc]) - ord('z')
+                    nn = Node(data[nr][nc], (nr, nc))
+                    if nn in nodes:
+                        nn = nodes[nodes.index(nn)]
                     else:
-                        weight = ord(data[nr][nc]) - ord(data[r][c])
+                        nodes.append(nn)
+                    node.nodes.add(nn)
+        return nodes
 
-                    # if weight <= 0:
-                    #     weight = 1
-                    # if weight > 1:
-                    #     weight = 9999
-                    # weight += 100
+    def get_start(self, nodes):
+        for n in nodes:
+            if n.name == 'S':
+                return n
+        return None
 
-                    if weight <= 0:
-                        weight = 1
-                    if weight > 1:
-                        continue
+    def get_end(self, nodes):
+        for n in nodes:
+            if n.name == 'E':
+                return n
+        return None
 
-                    # print(f'{label} <--> {nl} weight: {weight}')
-                    g.add_edge(label, nl, weight=weight)
-        return g
+    def print(self, nodes):
+        for n in nodes:
+            print(f'{n}')
+            for c in n.nodes:
+                print(f'\t{c}')
+
+    def visit(self, node: Node, unvisited: set, distance: dict, prev):
+        for c in node.nodes:
+            if c in unvisited:
+                d = self.get_distance(node, c)
+                if d - 30 > 1:
+                    continue
+                d += distance[node]
+                if d < distance[c]:
+                    distance[c] = d
+                    prev[c] = node
+        unvisited.remove(node)
+
+    def get_new_current(self, unvisited, distance):
+        node = None
+        min_dist = 999999999
+        for n in unvisited:
+            if distance[n] < min_dist:
+                min_dist = distance[n]
+                node = n
+        return node
+
+    def shortest_path(self, nodes):
+        unvisited = set(nodes)
+        distance = dict()
+        for n in nodes:
+            distance[n] = 999999999
+        distance[self.get_start(nodes)] = 0
+
+        prev = dict()
+        while self.get_end(nodes) in unvisited:
+            node = self.get_new_current(unvisited, distance)
+            self.visit(node, unvisited, distance, prev)
+
+        return prev
 
     def solve_part_1(self, data: Any) -> int:
-        g = self.build_graph(data)
-        print(nx.get_edge_attributes(g, 'weight'))
-        print(nx.nodes(g))
-        print(nx.dijkstra_path_length(g, 'S-0-0', 'E-2-5', 'weight'))
-        path = nx.dijkstra_path(g, source='S-0-0', target='E-2-5', weight='weight')
-        print(f'steps: {len(path)}')
+        nodes = self.build_graph(data)
+        prev = self.shortest_path(nodes)
+        path = []
+        node = self.get_end(nodes)
+        while node in prev:
+            path.append(node)
+            node = prev[node]
+            if node not in prev:
+                path.append(node)
 
-        pos = dict()
-        for r in range(len(data)):
-            for c in range(len(data[r])):
-                pos[self.get_label(data, r, c)] = (c, 4 - r)
-            #
-            # m = n.split('-')
-            # pos[n] = (int(m[1]), int(m[2]))
-
-        nx.draw_networkx(g, pos)
-        plt.show()
-        return path
+        return len(path) - 1
 
     def solve_part_2(self, data: Any) -> int:
         return 0

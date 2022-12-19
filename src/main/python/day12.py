@@ -5,28 +5,30 @@ Day 12: Hill Climbing Algorithm
 https://adventofcode.com/2022/day/12
 """
 import os.path
+from functools import cache
 from typing import Any
 
 from src.main.python.util import AbstractSolver
 
 
 class Node:
+    last_node_id = -1
 
     def __init__(self, name, location) -> None:
         self.name = name
         self.location = location
         self.nodes = set()
+        Node.last_node_id += 1
+        self.node_id = Node.last_node_id
 
-    def __key(self):
-        return self.name, self.location
+    # def __key(self):
+    #     return self.node_id
 
     def __hash__(self) -> int:
-        return hash(self.__key())
+        return self.node_id
 
-    def __eq__(self, o: object) -> bool:
-        if isinstance(o, Node):
-            return self.__key() == o.__key()
-        return NotImplemented
+    def __eq__(self, o: 'Node') -> bool:
+        return self.node_id == o.node_id
 
     def __repr__(self) -> str:
         return f'{self.name} {self.location}'
@@ -35,6 +37,7 @@ class Node:
 class Solver(AbstractSolver):
     def __init__(self) -> None:
         super().__init__()
+        self.data = None
 
     def init_data(self, data_file_path: str = None) -> Any:
         return self.get_data(self.get_day(), data_file_path)
@@ -71,29 +74,38 @@ class Solver(AbstractSolver):
 
         return n2v - n1v + 30
 
-    def build_graph(self, data):
-        nodes = []
-        for r in range(len(data)):
-            for c in range(len(data[0])):
-                node = Node(data[r][c], (r, c))
-                if node in nodes:
-                    node = nodes[nodes.index(node)]
+    @cache
+    def build_graph(self):
+        nodes = dict()
+        for r in range(len(self.data)):
+            for c in range(len(self.data[0])):
+                if (r, c) in nodes:
+                    node = nodes[(r, c)]
                 else:
-                    nodes.append(node)
-                for nr, nc in self.get_neighbor_indexes(data, r, c):
-                    nn = Node(data[nr][nc], (nr, nc))
-                    if nn in nodes:
-                        nn = nodes[nodes.index(nn)]
+                    node = Node(self.data[r][c], (r, c))
+                    nodes[(r, c)] = node
+
+                for nr, nc in self.get_neighbor_indexes(self.data, r, c):
+                    if (nr, nc) in nodes:
+                        nn = nodes[(nr, nc)]
                     else:
-                        nodes.append(nn)
+                        nn = Node(self.data[nr][nc], (nr, nc))
+                        nodes[(nr, nc)] = nn
                     node.nodes.add(nn)
-        return nodes
+        return list(nodes.values())
 
     def get_start(self, nodes):
         for n in nodes:
             if n.name == 'S':
                 return n
         return None
+
+    def get_all_starts(self, nodes):
+        starts = []
+        for n in nodes:
+            if n.name == 'a' or n.name == 'S':
+                starts.append(n)
+        return starts
 
     def get_end(self, nodes):
         for n in nodes:
@@ -128,23 +140,23 @@ class Solver(AbstractSolver):
                 node = n
         return node
 
-    def shortest_path(self, nodes):
+    def shortest_path(self, nodes, start_node):
         unvisited = set(nodes)
         distance = dict()
         for n in nodes:
             distance[n] = 999999999
-        distance[self.get_start(nodes)] = 0
+        distance[start_node] = 0
 
         prev = dict()
         while self.get_end(nodes) in unvisited:
             node = self.get_new_current(unvisited, distance)
+            if node is None:
+                break
             self.visit(node, unvisited, distance, prev)
 
         return prev
 
-    def solve_part_1(self, data: Any) -> int:
-        nodes = self.build_graph(data)
-        prev = self.shortest_path(nodes)
+    def get_path(self, nodes, prev):
         path = []
         node = self.get_end(nodes)
         while node in prev:
@@ -153,10 +165,31 @@ class Solver(AbstractSolver):
             if node not in prev:
                 path.append(node)
 
+        return list(reversed(path))
+
+    def solve_part_1(self, data: Any) -> int:
+        # return 0
+        self.data = data
+        nodes = self.build_graph()
+        prev = self.shortest_path(nodes, self.get_start(nodes))
+        path = self.get_path(nodes, prev)
+
         return len(path) - 1
 
     def solve_part_2(self, data: Any) -> int:
-        return 0
+        self.data = data
+        min_steps = 999999999
+        nodes = self.build_graph()
+        start_nodes = self.get_all_starts(nodes)
+        for start_node in start_nodes:
+            nodes = self.build_graph()
+            prev = self.shortest_path(nodes, start_node)
+            path = self.get_path(nodes, prev)
+            if len(path) > 0:
+                if len(path) - 1 < min_steps:
+                    min_steps = len(path) - 1
+
+        return min_steps
 
     def get_day(self) -> str:
         return os.path.basename(__file__)[3:5]

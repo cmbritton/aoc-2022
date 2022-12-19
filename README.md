@@ -79,7 +79,7 @@ No answers here! Just elapsed times for each puzzle solution.
 |[Day 9: Rope Bridge](https://adventofcode.com/2022/9)|22.31 milliseconds|90.08 milliseconds|
 |[Day 10: Cathode-Ray Tube](https://adventofcode.com/2022/10)|366.30 microseconds|371.90 microseconds|
 |[Day 11: Monkey in the Middle](https://adventofcode.com/2022/11)|6.00 milliseconds|2.99 seconds|
-|[Day 12: Hill Climbing Algorithm](https://adventofcode.com/2022/12)|17.04 seconds|Unsolved|
+|[Day 12: Hill Climbing Algorithm](https://adventofcode.com/2022/12)|620.97 milliseconds|99.38 seconds|
 |Day 13: Unavailable|Unsolved|Unsolved|
 |Day 14: Unavailable|Unsolved|Unsolved|
 |Day 15: Unavailable|Unsolved|Unsolved|

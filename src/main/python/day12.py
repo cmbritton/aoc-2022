@@ -12,27 +12,11 @@ from src.main.python.util import AbstractSolver
 
 
 class Node:
-    last_node_id = -1
 
     def __init__(self, name, location) -> None:
         self.name = name
         self.location = location
         self.nodes = set()
-        Node.last_node_id += 1
-        self.node_id = Node.last_node_id
-
-    # def __key(self):
-    #     return self.node_id
-
-    def __hash__(self) -> int:
-        return self.node_id
-
-    def __eq__(self, o: 'Node') -> bool:
-        return self.node_id == o.node_id
-
-    def __repr__(self) -> str:
-        return f'{self.name} {self.location}'
-
 
 class Solver(AbstractSolver):
     def __init__(self) -> None:
@@ -41,9 +25,6 @@ class Solver(AbstractSolver):
 
     def init_data(self, data_file_path: str = None) -> Any:
         return self.get_data(self.get_day(), data_file_path)
-
-    def get_label(self, d, r, c):
-        return f'{d[r][c]}-{r}-{c}'
 
     def get_neighbor_indexes(self, d, r, c):
         indices = []
@@ -112,12 +93,6 @@ class Solver(AbstractSolver):
             if n.name == 'E':
                 return n
         return None
-
-    def print(self, nodes):
-        for n in nodes:
-            print(f'{n}')
-            for c in n.nodes:
-                print(f'\t{c}')
 
     def visit(self, node: Node, unvisited: set, distance: dict, prev):
         for c in node.nodes:

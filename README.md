@@ -80,7 +80,7 @@ No answers here! Just elapsed times for each puzzle solution.
 |[Day 10: Cathode-Ray Tube](https://adventofcode.com/2022/10)|366.30 microseconds|371.90 microseconds|
 |[Day 11: Monkey in the Middle](https://adventofcode.com/2022/11)|6.00 milliseconds|2.99 seconds|
 |[Day 12: Hill Climbing Algorithm](https://adventofcode.com/2022/12)|620.97 milliseconds|99.38 seconds|
-|[Day 13: Distress Signal](https://adventofcode.com/2022/13)|9.42 milliseconds|Unsolved|
+|[Day 13: Distress Signal](https://adventofcode.com/2022/13)|9.42 milliseconds|10.92 milliseconds|
 |Day 14: Unavailable|Unsolved|Unsolved|
 |Day 15: Unavailable|Unsolved|Unsolved|
 |Day 16: Unavailable|Unsolved|Unsolved|

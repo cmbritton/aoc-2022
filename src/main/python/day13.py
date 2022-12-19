@@ -5,7 +5,6 @@ Day 13: Distress Signal
 https://adventofcode.com/2022/day/13
 """
 import os.path
-import re
 from dataclasses import dataclass
 from functools import cmp_to_key
 from itertools import zip_longest
@@ -39,7 +38,8 @@ class Solver(AbstractSolver):
 
         return packet_pairs
 
-    def compare_int(self, p1, p2):
+    @staticmethod
+    def compare_int(p1, p2):
         if p1 < p2:
             return -1
         elif p1 > p2:
@@ -50,21 +50,6 @@ class Solver(AbstractSolver):
     def compare(self, p1, p2):
         if isinstance(p1, int) and (isinstance(p2, int)):
             return self.compare_int(p1, p2)
-        elif isinstance(p1, int) and (isinstance(p2, list)):
-            return self.is_valid([p1], p2)
-        elif isinstance(p1, list) and (isinstance(p2, int)):
-            return self.is_valid(p1, [p2])
-        else:
-            return self.is_valid(p1, p2)
-
-    def compare_packets(self, p1, p2):
-        if isinstance(p1, int) and (isinstance(p2, int)):
-            if p1 < p2:
-                return -1
-            elif p1 > p2:
-                return 1
-            else:
-                return 0
         elif isinstance(p1, int) and (isinstance(p2, list)):
             return self.is_valid([p1], p2)
         elif isinstance(p1, list) and (isinstance(p2, int)):
@@ -102,27 +87,7 @@ class Solver(AbstractSolver):
         packets.append([[2]])
         packets.append([[6]])
 
-        packet_map = dict()
-        # pattern = r'\[\]'
-        for p in packets:
-            # m = re.search(pattern, str(p))
-            # if m:
-            #     key = str(p).replace('[', '').replace(']', '')
-            # else:
-            #     key = str(p).replace('[', ')').replace(']', '(')
-            s = str(p)
-            if '[]' in s:
-                key = str(p).replace('[', ')').replace(']', '(')
-            else:
-                key = str(p).replace('[', '').replace(']', '')
-            packet_map[key] = p
-
-        sorted_packets = []
-        for p in sorted(packets, key=cmp_to_key(self.is_valid)):
-        # for k in sorted(packet_map.keys()):
-            sorted_packets.append(p)
-
-# 30800 is too high
+        sorted_packets = sorted(packets, key=cmp_to_key(self.is_valid))
 
         x1 = sorted_packets.index([[2]]) + 1
         x2 = sorted_packets.index([[6]]) + 1

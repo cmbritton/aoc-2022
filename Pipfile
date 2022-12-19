@@ -4,6 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+matplotlib = "*"
+networkx = "*"
 
 [dev-packages]
 flake8 = "*"

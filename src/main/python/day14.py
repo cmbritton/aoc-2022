@@ -22,6 +22,8 @@ class Solver(AbstractSolver):
         self.sand_points = []
         self.count = 0
         self.sand_history = []
+        self.floor = False
+        self.max_y = 0
 
     def init_data(self, data_file_path: str = None) -> Any:
         data = self.get_data(self.get_day(), data_file_path)
@@ -50,13 +52,17 @@ class Solver(AbstractSolver):
             max_y = max(max_y, line.p1.y)
             max_y = max(max_y, line.p2.y)
 
-        print(f'({min_x}, {min_y}) ({max_x}, {max_y})')
+        # print(f'({min_x}, {min_y}) ({max_x}, {max_y})')
+        self.max_y = max_y
         return rock_veins
 
     def is_occupied_by_sand(self, point):
         return point in self.sand_points
 
     def is_occupied_by_rock(self, point):
+        if self.floor:
+            if point.y == self.max_y + 2:
+                return True
         for line in self.rock_veins:
             if point.x == line.p1.x == line.p2.x:
                 y1 = min(line.p1.y, line.p2.y)
@@ -90,37 +96,40 @@ class Solver(AbstractSolver):
         indentstr = '    ' if indent else ''
         # indentstr = '    ' * indent
         # print(f'{indentstr}{point}')
-        self.sand_history.append(f'{indentstr}{point}')
+        # self.sand_history.append(f'{indentstr}{point}')
         if self.can_drop_down(point):
             obstruction = self.next_obstruction(point)
             if obstruction is None:
                 return True
             p = Point(point.x, obstruction.y - 1)
             # print(f'\t{indentstr}drops down to {p}')
-            self.sand_history.append(f'\t{indentstr}drops down to {p}')
-            result = self.drop(p, indent + 1)
+            # self.sand_history.append(f'\t{indentstr}drops down to {p}')
+            result = self.drop(p, True)
             return result
         elif self.can_drop_left(point):
             p = Point(point.x - 1, point.y + 1)
             # print(f'\t{indentstr}rolls left to {p}')
-            self.sand_history.append(f'\t{indentstr}rolls left to {p}')
-            result = self.drop(p, indent + 1)
+            # self.sand_history.append(f'\t{indentstr}rolls left to {p}')
+            result = self.drop(p, True)
             return result
         elif self.can_drop_right(point):
             p = Point(point.x + 1, point.y + 1)
             # print(f'\t{indentstr}rolls right to {p}')
-            self.sand_history.append(f'\t{indentstr}rolls right to {p}')
-            result = self.drop(p, indent + 1)
+            # self.sand_history.append(f'\t{indentstr}rolls right to {p}')
+            result = self.drop(p, True)
             return result
         else:
             # print(f'\t{indentstr}comes to rest at {point}')
-            self.sand_history.append(f'\t{indentstr}comes to rest at {point}')
+            # self.sand_history.append(f'\t{indentstr}comes to rest at {point}')
             if point in self.sand_points:
-                self.print()
+                # self.print()
                 raise RuntimeError(f'Duplicate resting point {point}')
             else:
                 self.sand_points.append(point)
-            return False
+            if self.floor and point == (500, 0):
+                return True
+            else:
+                return False
 
     def next_obstruction(self, point):
         ys = []
@@ -136,6 +145,8 @@ class Solver(AbstractSolver):
                 ys.append(line.p1.y)
                 ys.append(line.p2.y)
 
+        if self.floor:
+            ys.append(self.max_y + 2)
         filtered_ys = list(filter(lambda x: x > point.y, ys))
         if len(filtered_ys) == 0:
             return None
@@ -199,12 +210,34 @@ class Solver(AbstractSolver):
             # self.print(self)
             if len(self.sand_points) == prev:
                 print(f'Sand not added in iteration {self.count}')
-                print(self.sand_history)
+                print('\n'.join(self.sand_history))
                 print(self)
         return len(self.sand_points)
 
     def solve_part_2(self, data: Any) -> int:
-        return 0
+        self.rock_veins = data
+        self.floor = True
+        done = False
+        sand_point = Point(500, 0)
+        # self.print()
+        try:
+            while not done:
+                self.count += 1
+                # print(f'\nnew sand {self.count}')
+                prev = len(self.sand_points)
+                self.sand_history.clear()
+                done = self.drop(sand_point)
+                # self.print(self)
+                if len(self.sand_points) == prev:
+                    print(f'Sand not added in iteration {self.count}')
+                    print('\n'.join(self.sand_history))
+                    print(self)
+        except RecursionError:
+            print(f'Recursion error in iteration {self.count}')
+            print('\n'.join(self.sand_history))
+            print(self)
+
+        return len(self.sand_points)
 
     def get_day(self) -> str:
         return os.path.basename(__file__)[3:5]

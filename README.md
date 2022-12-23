@@ -81,7 +81,7 @@ No answers here! Just elapsed times for each puzzle solution.
 |[Day 11: Monkey in the Middle](https://adventofcode.com/2022/11)|6.00 milliseconds|2.99 seconds|
 |[Day 12: Hill Climbing Algorithm](https://adventofcode.com/2022/12)|620.97 milliseconds|99.38 seconds|
 |[Day 13: Distress Signal](https://adventofcode.com/2022/13)|9.42 milliseconds|10.92 milliseconds|
-|[Day 14: Regolith Reservoir](https://adventofcode.com/2022/13)|6.02 seconds|896.42 seconds|
+|[Day 14: Regolith Reservoir](https://adventofcode.com/2022/13)|56.52 milliseconds|3.17 seconds|
 |Day 15: Unavailable|Unsolved|Unsolved|
 |Day 16: Unavailable|Unsolved|Unsolved|
 |Day 17: Unavailable|Unsolved|Unsolved|

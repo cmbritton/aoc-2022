@@ -82,7 +82,7 @@ No answers here! Just elapsed times for each puzzle solution.
 |[Day 12: Hill Climbing Algorithm](https://adventofcode.com/2022/12)|620.97 milliseconds|99.38 seconds|
 |[Day 13: Distress Signal](https://adventofcode.com/2022/13)|9.42 milliseconds|10.92 milliseconds|
 |[Day 14: Regolith Reservoir](https://adventofcode.com/2022/14)|56.52 milliseconds|3.17 seconds|
-|[Day 15: Beacon Exclusion Zone](https://adventofcode.com/2022/15)|347.10 microseconds|Unsolved|
+|[Day 15: Beacon Exclusion Zone](https://adventofcode.com/2022/15)|289.60 microseconds|97.11 seconds|
 |Day 16: Unavailable|Unsolved|Unsolved|
 |Day 17: Unavailable|Unsolved|Unsolved|
 |Day 18: Unavailable|Unsolved|Unsolved|
